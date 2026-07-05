@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script>(function(){var t=localStorage.getItem('roomsy-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register — Roomsy</title>
+  <link rel="stylesheet" th:href="@{/css/roomsy.css}"/>
+  <script>
+    window.toggleRoomsyTheme=function(){var d=document.documentElement.getAttribute("data-theme")==="dark";if(d){document.documentElement.removeAttribute("data-theme");localStorage.setItem("roomsy-theme","light");}else{document.documentElement.setAttribute("data-theme","dark");localStorage.setItem("roomsy-theme","dark");}};
+  </script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--font-body);min-height:100vh;display:flex;background:var(--paper);color:var(--ink);}
+    .left{flex:1;background:#241F1C;display:flex;align-items:center;justify-content:center;padding:60px;position:relative;overflow:hidden;}
+    .left::before{content:'';position:absolute;width:380px;height:380px;background:var(--clay);border-radius:50%;opacity:0.18;top:-100px;right:-100px;filter:blur(70px);}
+    .left-content{z-index:1;max-width:380px;}
+    .logo{font-family:var(--font-display);font-size:2rem;font-weight:700;color:#FBF7F2;text-decoration:none;display:block;margin-bottom:28px;}
+    .logo span{color:var(--clay);font-style:italic;}
+    .left-content h2{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:#FBF7F2;margin-bottom:12px;}
+    .left-content p{color:rgba(251,247,242,0.6);line-height:1.7;margin-bottom:26px;font-size:0.88rem;}
+    .perk{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;color:rgba(251,247,242,0.85);}
+    .perk-icon{width:34px;height:34px;border-radius:9px;background:rgba(251,247,242,0.08);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;}
+    .perk strong{display:block;font-size:0.84rem;margin-bottom:2px;}
+    .perk span{font-size:0.74rem;color:rgba(251,247,242,0.5);}
+
+    .right{flex:0 0 500px;display:flex;align-items:center;justify-content:center;padding:40px 44px;background:var(--paper);overflow-y:auto;position:relative;}
+    .theme-toggle-corner{position:absolute;top:24px;right:24px;}
+    .form-box{width:100%;}
+    .form-box h3{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--ink);margin-bottom:4px;}
+    .form-box .sub{font-size:0.84rem;color:var(--ink-soft);margin-bottom:20px;}
+
+    /* Role toggle */
+    .role-toggle{display:flex;gap:10px;margin-bottom:20px;}
+    .role-btn{flex:1;padding:12px;border-radius:11px;border:2px solid var(--line);background:var(--paper-dim);font-family:var(--font-body);font-size:0.85rem;font-weight:600;cursor:pointer;text-align:center;transition:all .18s;color:var(--ink-soft);}
+    .role-btn.active{border-color:var(--clay);background:rgba(199,93,59,0.06);color:var(--clay);}
+    .role-btn .ri{font-size:1.3rem;display:block;margin-bottom:4px;}
+
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .fg{display:flex;flex-direction:column;gap:6px;margin-bottom:13px;}
+    .fg label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--ink-soft);}
+    .fg label .req{color:var(--clay);}
+    .fg input,.fg select{padding:11px 14px;border:2px solid var(--line);border-radius:10px;font-family:var(--font-body);font-size:0.9rem;outline:none;background:var(--paper-dim);color:var(--ink);transition:border-color .15s;}
+    .fg input:focus,.fg select:focus{border-color:var(--clay);background:var(--white);}
+    .terms{font-size:0.72rem;color:var(--ink-soft);text-align:center;margin-top:10px;line-height:1.5;}
+    .terms a{color:var(--clay);text-decoration:none;}
+    .switch{text-align:center;margin-top:14px;font-size:0.82rem;color:var(--ink-soft);}
+    .switch a{color:var(--clay);font-weight:700;text-decoration:none;}
+    @media(max-width:800px){body{flex-direction:column;}.left{display:none;}.right{flex:1;padding:40px 24px;}}
+    @media(max-width:480px){.form-row{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <div class="left">
+    <div class="left-content">
+      <a href="/" class="logo">Room<span>sy</span></a>
+      <h2>Join Roomsy today</h2>
+      <p>Register as a tenant to find PGs or as an owner to list your property.</p>
+      <div class="perk"><div class="perk-icon">🔍</div><div><strong>For tenants</strong><span>Browse verified PGs, book visits, contact owners directly</span></div></div>
+      <div class="perk"><div class="perk-icon">🏠</div><div><strong>For owners</strong><span>List your PG free, manage bookings, reach thousands of tenants</span></div></div>
+      <div class="perk"><div class="perk-icon">💸</div><div><strong>Always free</strong><span>No hidden charges. No commission. Ever.</span></div></div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="theme-toggle-corner">
+      <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode"
+              style="border-color:var(--line);color:var(--ink);background:var(--paper-dim);">
+        <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
+      </button>
+    </div>
+    <div class="form-box">
+      <h3>Create account 🎉</h3>
+      <p class="sub">Free — takes less than a minute</p>
+      <div class="alert alert-error" th:if="${error}" th:text="${error}" style="margin-bottom:16px;"></div>
+
+      <form action="/register" method="post">
+        <div class="role-toggle">
+          <button type="button" class="role-btn"
+                  th:classappend="${selectedRole == 'TENANT'} ? ' active' : ''"
+                  onclick="setRole('TENANT', this)">
+            <span class="ri">🔍</span>I'm a tenant
+          </button>
+          <button type="button" class="role-btn"
+                  th:classappend="${selectedRole == 'OWNER'} ? ' active' : ''"
+                  onclick="setRole('OWNER', this)">
+            <span class="ri">🏠</span>I'm an owner
+          </button>
+        </div>
+        <input type="hidden" name="role" id="roleInput"
+               th:value="${selectedRole != null ? selectedRole : 'TENANT'}"/>
+
+        <div class="form-row">
+          <div class="fg"><label>First name <span class="req">*</span></label><input type="text" name="firstName" placeholder="Priya" required/></div>
+          <div class="fg"><label>Last name <span class="req">*</span></label><input type="text" name="lastName" placeholder="Sharma" required/></div>
+        </div>
+        <div class="fg"><label>Email address <span class="req">*</span></label><input type="email" name="email" placeholder="priya@gmail.com" required/></div>
+        <div class="fg"><label>Phone number <span class="req">*</span></label><input type="tel" name="phone" placeholder="9876543210" required/></div>
+        <div class="fg"><label>Password <span class="req">*</span></label><input type="password" name="password" placeholder="Minimum 6 characters" minlength="6" required/></div>
+
+        <button type="submit" class="btn btn-clay btn-block">Create account — free →</button>
+        <div class="terms">By registering, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a></div>
+      </form>
+      <div class="switch">Already have an account? <a href="/login">Login</a></div>
+    </div>
+  </div>
+  <script>
+    function setRole(role, btn) {
+      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('roleInput').value = role;
+    }
+  </script>
+</body>
+</html>

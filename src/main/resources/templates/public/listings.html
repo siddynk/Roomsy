@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script>(function(){var t=localStorage.getItem('roomsy-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Browse PGs — Roomsy</title>
+  <link rel="stylesheet" th:href="@{/css/roomsy.css}"/>
+  <script th:src="@{/js/theme.js}" defer></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--font-body);background:var(--paper);color:var(--ink);}
+    .nav{display:flex;gap:16px;align-items:center;}
+    .nav a{color:rgba(251,247,242,0.78);text-decoration:none;font-weight:500;font-size:0.85rem;}
+
+    .page-hero{background:var(--ink);padding:54px 60px 36px;color:var(--paper);}
+    .page-hero h1{font-family:var(--font-display);font-size:1.9rem;font-weight:700;margin-bottom:6px;}
+    .page-hero p{color:rgba(251,247,242,0.6);font-size:0.88rem;}
+
+    .main{display:flex;gap:26px;padding:28px 60px 60px;align-items:flex-start;}
+
+    .sidebar{width:260px;flex-shrink:0;background:var(--white);border:1px solid var(--line);border-radius:var(--radius-tag-sm);padding:22px;position:sticky;top:84px;box-shadow:var(--shadow-card);}
+    .sidebar h3{font-family:var(--font-display);font-size:0.95rem;font-weight:700;margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--clay);}
+    .filter-sec{margin-bottom:18px;}
+    .filter-sec h4{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--ink-soft);margin-bottom:9px;}
+    .filter-sec input,.filter-sec select{width:100%;padding:9px 12px;border:2px solid var(--line);border-radius:9px;font-family:var(--font-body);font-size:0.85rem;outline:none;background:var(--paper-dim);transition:border-color .15s;}
+    .filter-sec input:focus,.filter-sec select:focus{border-color:var(--clay);background:white;}
+
+    .results{flex:1;}
+    .results-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+    .results-header h2{font-family:var(--font-display);font-size:1.1rem;font-weight:700;}
+    .results-header span{color:var(--ink-soft);font-size:0.8rem;}
+    .search-bar{display:flex;gap:8px;background:white;border:2px solid var(--line);border-radius:11px;padding:6px 12px;align-items:center;margin-bottom:18px;}
+    .search-bar input{flex:1;border:none;outline:none;font-family:var(--font-body);font-size:0.88rem;background:transparent;}
+
+    .pg-list-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius-tag);box-shadow:var(--shadow-card);display:flex;overflow:hidden;margin-bottom:16px;transition:transform .2s,box-shadow .2s;}
+    .pg-list-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift);}
+    .pg-thumb{width:200px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:3.2rem;position:relative;}
+    .gender-badge{position:absolute;top:10px;left:10px;background:rgba(36,31,28,0.6);color:white;padding:3px 10px;border-radius:100px;font-size:0.66rem;font-weight:700;}
+    .pg-info{flex:1;padding:18px 22px;}
+    .pg-info-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;}
+    .pg-info h3{font-family:var(--font-display);font-size:1.02rem;font-weight:700;color:var(--ink);}
+    .pg-rent{font-family:var(--font-display);font-size:1.15rem;font-weight:700;color:var(--clay);}
+    .pg-rent small{font-family:var(--font-body);font-size:0.68rem;font-weight:400;color:var(--ink-soft);}
+    .pg-loc{font-size:0.78rem;color:var(--ink-soft);margin-bottom:8px;}
+    .pg-meta{display:flex;gap:14px;font-size:0.74rem;color:var(--ink-soft);margin-bottom:10px;}
+    .pg-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;}
+    .tag{background:var(--paper-dim);padding:3px 9px;border-radius:100px;font-size:0.66rem;font-weight:500;border:1px solid var(--line);}
+    .pg-actions{display:flex;gap:8px;}
+
+    .empty{text-align:center;padding:56px;color:var(--ink-soft);}
+    .empty .ei{font-size:2.6rem;margin-bottom:12px;}
+    .empty h3{font-family:var(--font-display);font-size:1.05rem;color:var(--ink);margin-bottom:6px;}
+
+    @media(max-width:900px){.main{flex-direction:column;padding:20px;}.sidebar{width:100%;position:static;}.pg-thumb{width:120px;}.rs-navbar{padding:0 20px;}.page-hero{padding:74px 20px 26px;}}
+    @media(max-width:600px){.pg-list-card{flex-direction:column;}.pg-thumb{width:100%;height:130px;}}
+  </style>
+</head>
+<body>
+
+  <nav class="rs-navbar">
+    <a href="/" class="rs-logo">Room<span>sy</span></a>
+    <div class="nav">
+      <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
+      </button>
+      <a href="/listings">Browse PGs</a>
+      <th:block th:if="${!isLoggedIn}">
+        <a href="/login">Login</a>
+        <a href="/register" class="btn btn-clay btn-sm">Register</a>
+      </th:block>
+      <th:block th:if="${isLoggedIn}">
+        <a th:href="${currentUser.role == 'TENANT'} ? '/tenant/dashboard' : '/owner/dashboard'"
+           th:text="'Hi, ' + ${currentUser.fullName.split(' ')[0]}">Hi</a>
+        <a href="/logout" class="btn btn-outline btn-sm" style="color:var(--paper);border-color:rgba(251,247,242,0.25);">Logout</a>
+      </th:block>
+    </div>
+  </nav>
+
+  <div class="page-hero">
+    <h1>🏠 Browse PGs</h1>
+    <p th:text="${resultCount} + ' verified PG listings found'">0 listings found</p>
+  </div>
+
+  <div class="main">
+    <aside class="sidebar">
+      <h3>Filters</h3>
+      <form action="/listings" method="get">
+        <div class="filter-sec">
+          <h4>City / area</h4>
+          <input type="text" name="city" th:value="${city}" placeholder="e.g. Koramangala"/>
+        </div>
+        <div class="filter-sec">
+          <h4>Gender</h4>
+          <select name="gender">
+            <option value="">Any</option>
+            <option value="Male"   th:selected="${gender == 'Male'}">Boys only</option>
+            <option value="Female" th:selected="${gender == 'Female'}">Girls only</option>
+          </select>
+        </div>
+        <div class="filter-sec">
+          <h4>Room type</h4>
+          <select name="roomType">
+            <option value="">Any</option>
+            <option value="Single" th:selected="${roomType == 'Single'}">Single room</option>
+            <option value="Double" th:selected="${roomType == 'Double'}">Double sharing</option>
+            <option value="Triple" th:selected="${roomType == 'Triple'}">Triple sharing</option>
+          </select>
+        </div>
+        <div class="filter-sec">
+          <h4>Max budget (₹/month)</h4>
+          <select name="maxRent">
+            <option value="">Any</option>
+            <option value="5000"  th:selected="${maxRent == 5000}">Under ₹5,000</option>
+            <option value="8000"  th:selected="${maxRent == 8000}">Under ₹8,000</option>
+            <option value="10000" th:selected="${maxRent == 10000}">Under ₹10,000</option>
+            <option value="15000" th:selected="${maxRent == 15000}">Under ₹15,000</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-clay btn-block">Apply filters</button>
+      </form>
+      <form action="/listings" method="get">
+        <button type="submit" class="btn btn-ghost btn-block btn-sm" style="margin-top:8px;">Clear all</button>
+      </form>
+    </aside>
+
+    <div class="results">
+      <form action="/listings" method="get" class="search-bar">
+        <span>🔍</span>
+        <input type="text" name="query" th:value="${query}" placeholder="Search PG name, area, city..."/>
+        <button type="submit" class="btn btn-ink btn-sm">Search</button>
+      </form>
+
+      <div class="results-header">
+        <h2>PG listings</h2>
+        <span th:text="${resultCount} + ' results'">0 results</span>
+      </div>
+
+      <div class="empty" th:if="${#lists.isEmpty(pgs)}">
+        <div class="ei">🏠</div>
+        <h3>No PGs found</h3>
+        <p>Try adjusting your filters or search terms.</p>
+        <a href="/listings" class="btn btn-clay btn-sm">Clear filters</a>
+      </div>
+
+      <div th:each="pg, i : ${pgs}" class="pg-list-card">
+        <div class="pg-thumb"
+             th:style="${pg.photoUrl != null and !pg.photoUrl.isEmpty()} ?
+                        'background:url(' + ${pg.photoUrl} + ') center/cover no-repeat' :
+                        (${i.index % 4 == 0} ? 'background:linear-gradient(135deg,#C75D3B,#A8472A)' :
+                        (${i.index % 4 == 1} ? 'background:linear-gradient(135deg,#2F6B4F,#1F4D38)' :
+                        (${i.index % 4 == 2} ? 'background:linear-gradient(135deg,#E8B04B,#C98F2E)' :
+                        'background:linear-gradient(135deg,#241F1C,#3A332E)')))">
+          <span th:if="${pg.photoUrl == null or pg.photoUrl.isEmpty()}">🏠</span>
+          <div class="gender-badge" th:text="${pg.gender}">Any</div>
+        </div>
+        <div class="pg-info">
+          <div class="pg-info-top">
+            <h3 th:text="${pg.pgName}">PG Name</h3>
+            <div class="pg-rent">₹<span th:text="${pg.rent}">0</span><small>/mo</small></div>
+          </div>
+          <div class="pg-loc">📍 <span th:text="${pg.location}"></span>, <span th:text="${pg.city}"></span></div>
+          <div class="pg-meta">
+            <span th:text="'🛏️ ' + ${pg.roomType}">Type</span>
+            <span>📞 <span th:text="${pg.phone}">Phone</span></span>
+          </div>
+          <div class="pg-tags">
+            <span th:each="a : ${pg.amenitiesList}" class="tag" th:text="${a.trim()}">Amenity</span>
+          </div>
+          <div class="pg-actions">
+            <a th:href="@{/pg/{id}(id=${pg.id})}" class="btn btn-ink btn-sm">View details →</a>
+            <a th:href="'tel:' + ${pg.phone}" class="btn btn-outline btn-sm">📞 Call owner</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

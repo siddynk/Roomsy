@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script>(function(){var t=localStorage.getItem('roomsy-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>View Client — Roomsy Admin</title>
+  <link rel="stylesheet" th:href="@{/css/roomsy.css}"/>
+  <script th:src="@{/js/theme.js}" defer></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--font-body);background:var(--paper);color:var(--ink);display:flex;}
+    .sidebar{width:220px;background:#1C1714;min-height:100vh;position:sticky;top:0;flex-shrink:0;display:flex;flex-direction:column;}
+    .sb-top{padding:22px 20px;border-bottom:1px solid rgba(251,247,242,0.07);}
+    .sb-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:#FBF7F2;text-decoration:none;display:block;}
+    .sb-logo span{color:var(--clay);font-style:italic;}
+    .sb-badge{font-size:0.62rem;color:rgba(251,247,242,0.35);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-top:3px;}
+    .sb-nav{padding:14px 0;flex:1;}
+    .sb-section{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:rgba(251,247,242,0.28);padding:10px 20px 5px;}
+    .sb-link{display:flex;align-items:center;gap:10px;padding:9px 20px;color:rgba(251,247,242,0.6);text-decoration:none;font-size:0.82rem;font-weight:500;transition:all .18s;border-left:3px solid transparent;}
+    .sb-link:hover{background:rgba(251,247,242,0.06);color:#FBF7F2;}
+    .sb-link.active{background:rgba(199,93,59,0.12);color:var(--clay);border-left-color:var(--clay);}
+    .sb-bottom{padding:14px 20px;border-top:1px solid rgba(251,247,242,0.07);}
+    .sb-bottom a{color:rgba(251,247,242,0.45);text-decoration:none;font-size:0.78rem;}
+    .sb-bottom a:hover{color:#FBF7F2;}
+    .main{flex:1;overflow:auto;min-width:0;}
+    .topbar{background:var(--white);padding:15px 30px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+    .topbar h1{font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--ink);}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .admin-tag{background:rgba(199,93,59,0.1);color:var(--clay);padding:4px 12px;border-radius:100px;font-size:0.7rem;font-weight:700;border:1px solid rgba(199,93,59,0.2);}
+    .wrap{max-width:780px;padding:26px 30px 60px;}
+
+    .profile-top{background:linear-gradient(135deg,#1C1714,#2A2320);border-radius:var(--radius-tag-sm);padding:26px 30px;display:flex;align-items:center;gap:18px;margin-bottom:18px;}
+    .avatar{width:60px;height:60px;border-radius:50%;background:var(--clay);color:white;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;flex-shrink:0;}
+    .profile-name h2{font-family:var(--font-display);font-size:1.35rem;font-weight:700;color:#FBF7F2;margin-bottom:6px;}
+    .meta-chips{display:flex;gap:8px;flex-wrap:wrap;}
+
+    .card{background:var(--white);border-radius:var(--radius-tag-sm);border:1px solid var(--line);box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:16px;}
+    .card h3{font-family:var(--font-display);font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--ink);margin-bottom:14px;padding-bottom:9px;border-bottom:2px solid var(--paper-dim);}
+    .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+    .info-item .label{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--ink-soft);margin-bottom:4px;}
+    .info-item .value{font-size:0.86rem;font-weight:600;color:var(--ink);}
+    .info-item .value.price{color:var(--clay);font-size:1rem;font-weight:700;}
+
+    .placement-box{border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:13px;}
+    .pb-placed{background:var(--sage-soft);border:1px solid rgba(47,107,79,0.2);}
+    .pb-searching{background:var(--gold-soft);border:1px solid rgba(232,176,75,0.25);}
+    .pb-inactive{background:var(--paper-dim);border:1px solid var(--line);}
+    .pb-icon{font-size:1.6rem;}
+    .pb-title{font-family:var(--font-display);font-weight:700;font-size:0.9rem;margin-bottom:2px;}
+    .pb-sub{font-size:0.76rem;color:var(--ink-soft);}
+
+    .action-row{display:flex;gap:10px;flex-wrap:wrap;}
+
+    @media(max-width:900px){body{flex-direction:column;}.sidebar{width:100%;min-height:auto;position:static;}.wrap{padding:16px;}.info-grid{grid-template-columns:1fr 1fr;}}
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sb-top"><a href="/" class="sb-logo">Room<span>sy</span></a><div class="sb-badge">Admin panel</div></div>
+    <div class="sb-nav">
+      <div class="sb-section">Main</div>
+      <a href="/admin/dashboard" class="sb-link">📊 Dashboard</a>
+      <div class="sb-section">Manage</div>
+      <a href="/admin/clients"  class="sb-link active">👥 Clients</a>
+      <div class="sb-section">Site</div>
+      <a href="/" class="sb-link" target="_blank">🌐 Public site</a>
+    </div>
+    <div class="sb-bottom"><a href="/admin/logout">🚪 Logout</a></div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h1>👤 Client detail</h1>
+      <div class="topbar-right">
+        <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode"
+                style="border-color:var(--line);color:var(--ink);background:var(--paper-dim);">
+          <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
+        </button>
+        <span class="admin-tag" th:text="'🔐 ' + ${adminName}">Admin</span>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="profile-top">
+        <div class="avatar" th:text="${#strings.substring(client.user.fullName,0,1)}">P</div>
+        <div class="profile-name">
+          <h2 th:text="${client.user.fullName}">Name</h2>
+          <div class="meta-chips">
+            <span class="pill"
+              th:classappend="${client.status=='Searching'} ? 'pill-gold' :
+                              (${client.status=='Placed'} ? 'pill-sage' : 'pill-muted')"
+              th:text="${client.status}">Status</span>
+            <span class="pill pill-muted" th:text="${client.gender}">Gender</span>
+            <span style="font-size:0.72rem;color:rgba(251,247,242,0.4);" th:text="'Client #' + ${client.id}">#1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📞 Contact information</h3>
+        <div class="info-grid">
+          <div class="info-item"><div class="label">Full name</div><div class="value" th:text="${client.user.fullName}">Name</div></div>
+          <div class="info-item"><div class="label">Email</div><div class="value" th:text="${client.user.email}">email</div></div>
+          <div class="info-item"><div class="label">Phone</div><div class="value" th:text="${client.user.phone}">phone</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🏠 PG preferences</h3>
+        <div class="info-grid">
+          <div class="info-item"><div class="label">Preferred location</div><div class="value" th:text="${client.preferredLocation}">Loc</div></div>
+          <div class="info-item"><div class="label">Budget</div><div class="value price" th:text="'₹' + ${client.budget} + '/mo'">₹0</div></div>
+          <div class="info-item"><div class="label">Room type</div><div class="value" th:text="${client.roomType}">Type</div></div>
+          <div class="info-item"><div class="label">Gender</div><div class="value" th:text="${client.gender}">Gender</div></div>
+          <div class="info-item"><div class="label">Status</div><div class="value" th:text="${client.status}">Status</div></div>
+          <div class="info-item"><div class="label">Registered</div><div class="value" th:text="${#temporals.format(client.createdAt,'dd MMM yyyy')}">Date</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📍 Placement status</h3>
+        <div class="placement-box pb-placed" th:if="${client.status=='Placed'}">
+          <div class="pb-icon">✅</div>
+          <div>
+            <div class="pb-title" style="color:var(--sage);">Client is placed</div>
+            <div class="pb-sub" th:text="'PG: ' + ${client.pgName!=null?client.pgName:'Not specified'}">PG</div>
+            <div class="pb-sub" th:if="${client.moveInDate!=null}" th:text="'Move-in: ' + ${client.moveInDate}">Date</div>
+          </div>
+        </div>
+        <div class="placement-box pb-searching" th:if="${client.status=='Searching'}">
+          <div class="pb-icon">🔍</div>
+          <div>
+            <div class="pb-title" style="color:#9A6B14;">Actively searching</div>
+            <div class="pb-sub" th:text="'Looking for ' + ${client.roomType} + ' in ' + ${client.preferredLocation} + ' under ₹' + ${client.budget}">Details</div>
+          </div>
+        </div>
+        <div class="placement-box pb-inactive" th:if="${client.status=='Inactive'}">
+          <div class="pb-icon">💤</div>
+          <div>
+            <div class="pb-title" style="color:var(--ink-soft);">Client inactive</div>
+            <div class="pb-sub">This client is not currently active.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>⚡ Actions</h3>
+        <div class="action-row">
+          <a th:href="@{/admin/clients/edit/{id}(id=${client.id})}" class="btn btn-clay btn-sm">✏️ Edit client</a>
+          <a href="/admin/clients" class="btn btn-outline btn-sm">← Back to clients</a>
+          <a th:href="@{/admin/clients/delete/{id}(id=${client.id})}" class="btn btn-danger btn-sm"
+             th:onclick="'return confirm(\'Delete ' + ${client.user.fullName} + '?\')'">🗑️ Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

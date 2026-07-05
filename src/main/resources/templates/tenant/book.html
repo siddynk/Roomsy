@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script>(function(){var t=localStorage.getItem('roomsy-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book a Visit — Roomsy</title>
+  <link rel="stylesheet" th:href="@{/css/roomsy.css}"/>
+  <script th:src="@{/js/theme.js}" defer></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--font-body);background:var(--paper);color:var(--ink);}
+    .nav{display:flex;gap:12px;align-items:center;}
+    .nav a{color:rgba(251,247,242,0.78);text-decoration:none;font-weight:500;font-size:0.85rem;}
+    .wrap{max-width:640px;margin:32px auto;padding:0 20px 60px;}
+
+    .card{background:var(--white);border-radius:var(--radius-tag-sm);border:1px solid var(--line);box-shadow:var(--shadow-card);padding:24px 28px;margin-bottom:18px;}
+    .card h2{font-family:var(--font-display);font-size:0.9rem;font-weight:700;color:var(--ink);margin-bottom:14px;padding-bottom:9px;border-bottom:2px solid var(--paper-dim);}
+
+    .pg-summary{display:flex;gap:14px;align-items:center;}
+    .pg-thumb{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--clay),var(--clay-deep));display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;}
+    .pg-summary h3{font-family:var(--font-display);font-size:0.96rem;font-weight:700;color:var(--ink);margin-bottom:4px;}
+    .pg-summary p{font-size:0.76rem;color:var(--ink-soft);}
+    .pg-price{margin-left:auto;font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--clay);}
+
+    .fg{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+    .fg label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--ink-soft);}
+    .fg label .req{color:var(--clay);}
+    .fg input,.fg textarea{padding:11px 14px;border:2px solid var(--line);border-radius:10px;font-family:var(--font-body);font-size:0.9rem;outline:none;background:var(--paper-dim);color:var(--ink);transition:border-color .15s;width:100%;}
+    .fg input:focus,.fg textarea:focus{border-color:var(--clay);background:var(--white);}
+    .fg input[readonly]{background:var(--paper-dim);cursor:not-allowed;opacity:0.65;}
+    .fg textarea{resize:vertical;min-height:90px;}
+    .hint{font-size:0.72rem;color:var(--ink-soft);margin-top:3px;}
+
+    .info-box{background:var(--gold-soft);border:1px solid rgba(232,176,75,0.3);border-radius:9px;padding:11px 14px;font-size:0.8rem;color:#7A5A10;margin-bottom:14px;}
+    .form-actions{display:flex;gap:12px;}
+    @media(max-width:600px){.rs-navbar{padding:0 20px;}.form-actions{flex-direction:column;}}
+  </style>
+</head>
+<body>
+  <nav class="rs-navbar">
+    <a href="/" class="rs-logo">Room<span>sy</span></a>
+    <div class="nav">
+      <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode">
+        <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
+      </button>
+      <a th:href="@{/pg/{id}(id=${pg.id})}">← Back to PG</a>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <div class="card">
+      <h2>🏠 You are booking</h2>
+      <div class="pg-summary">
+        <div class="pg-thumb">🏠</div>
+        <div>
+          <h3 th:text="${pg.pgName}">PG Name</h3>
+          <p>📍 <span th:text="${pg.location}"></span>, <span th:text="${pg.city}"></span></p>
+          <p style="margin-top:2px;">👤 <span th:text="${pg.gender}"></span> · 🛏️ <span th:text="${pg.roomType}"></span></p>
+        </div>
+        <div class="pg-price">₹<span th:text="${pg.rent}">0</span><span style="font-size:0.7rem;font-weight:400;color:var(--ink-soft);">/mo</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📅 Book a visit</h2>
+      <div class="info-box">ℹ️ Your request will be sent to the owner. They will confirm or reject it within 24 hours.</div>
+      <div class="alert alert-error" th:if="${error}" th:text="${error}" style="margin-bottom:14px;"></div>
+      <form th:action="@{/tenant/book/{id}(id=${pg.id})}" method="post">
+        <div class="fg">
+          <label>Your name</label>
+          <input type="text" th:value="${tenant.fullName}" readonly/>
+        </div>
+        <div class="fg">
+          <label>Preferred visit date <span class="req">*</span></label>
+          <input type="date" name="visitDate" id="visitDate" required/>
+          <span class="hint">Choose a date at least 1 day from today</span>
+        </div>
+        <div class="fg">
+          <label>Message to owner</label>
+          <textarea name="message" placeholder="e.g. I am a working professional looking for a long-term stay. Would love to visit this weekend."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-clay">📅 Send visit request</button>
+          <a th:href="@{/pg/{id}(id=${pg.id})}" class="btn btn-outline">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      var yyyy = tomorrow.getFullYear();
+      var mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+      var dd = String(tomorrow.getDate()).padStart(2, '0');
+      var minDate = yyyy + '-' + mm + '-' + dd;
+      var input = document.getElementById('visitDate');
+      input.min = minDate;
+      input.value = minDate; // default to tomorrow
+    });
+  </script>
+</body>
+</html>

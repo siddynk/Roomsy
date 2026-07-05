@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="navbar" style="background:#1a1a2e;padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:999;box-shadow:0 2px 16px rgba(0,0,0,0.2);">
+  <a href="/" style="font-size:1.4rem;font-weight:800;color:white;text-decoration:none;">Room<span style="color:#e8472a;">sy</span></a>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <a href="/listings" style="color:rgba(255,255,255,0.75);text-decoration:none;font-weight:500;font-size:0.88rem;">Browse PGs</a>
+
+    <!-- Not logged in -->
+    <th:block th:if="${!isLoggedIn}">
+      <a href="/login"    style="color:rgba(255,255,255,0.75);text-decoration:none;font-weight:500;font-size:0.88rem;">Login</a>
+      <a href="/register" style="background:#e8472a;color:white;padding:8px 18px;border-radius:8px;font-weight:700;font-size:0.85rem;text-decoration:none;">Register</a>
+    </th:block>
+
+    <!-- Logged in as Tenant -->
+    <th:block th:if="${isLoggedIn and currentUser.role == 'TENANT'}">
+      <a href="/tenant/dashboard" style="color:rgba(255,255,255,0.75);text-decoration:none;font-weight:500;font-size:0.88rem;">My Bookings</a>
+      <a href="/logout" style="background:#e8472a;color:white;padding:8px 18px;border-radius:8px;font-weight:700;font-size:0.85rem;text-decoration:none;">Logout</a>
+    </th:block>
+
+    <!-- Logged in as Owner -->
+    <th:block th:if="${isLoggedIn and currentUser.role == 'OWNER'}">
+      <a href="/owner/dashboard" style="color:rgba(255,255,255,0.75);text-decoration:none;font-weight:500;font-size:0.88rem;">My PGs</a>
+      <a href="/logout" style="background:#e8472a;color:white;padding:8px 18px;border-radius:8px;font-weight:700;font-size:0.85rem;text-decoration:none;">Logout</a>
+    </th:block>
+  </div>
+</nav>
+</body>
+</html>

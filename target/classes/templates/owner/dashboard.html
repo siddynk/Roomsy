@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script>(function(){var t=localStorage.getItem('roomsy-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Owner Dashboard — Roomsy</title>
+  <link rel="stylesheet" th:href="@{/css/roomsy.css}"/>
+  <script th:src="@{/js/theme.js}" defer></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--font-body);background:var(--paper);color:var(--ink);}
+    .nav{display:flex;gap:10px;align-items:center;}
+    .nav a{color:rgba(251,247,242,0.78);text-decoration:none;font-weight:500;font-size:0.85rem;padding:7px 12px;border-radius:7px;transition:background .15s;}
+    .nav a:hover{background:rgba(251,247,242,0.08);color:#FBF7F2;}
+
+    .page-header{background:var(--white);padding:22px 40px;border-bottom:1px solid var(--line);}
+    .page-header h1{font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--ink);margin-bottom:3px;}
+    .page-header p{color:var(--ink-soft);font-size:0.85rem;}
+    .flash{margin:14px 40px 0;padding:12px 16px;border-radius:var(--radius-tag-sm);}
+
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;padding:18px 40px;}
+    .stat{background:var(--white);border-radius:var(--radius-tag-sm);padding:17px 19px;border:1px solid var(--line);box-shadow:var(--shadow-card);display:flex;align-items:center;gap:12px;}
+    .si{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+    .si-pg{background:rgba(36,31,28,0.06);}
+    .si-p{background:var(--gold-soft);}
+    .si-c{background:var(--sage-soft);}
+    html[data-theme="dark"] .si-pg{background:rgba(251,247,242,0.08);}
+    .sn{font-family:var(--font-display);font-size:1.55rem;font-weight:700;line-height:1;color:var(--ink);}
+    .sl{font-size:0.67rem;color:var(--ink-soft);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-top:3px;}
+
+    .content{padding:0 40px 60px;}
+    .sec-header{display:flex;justify-content:space-between;align-items:center;margin:22px 0 14px;}
+    .sec-header h2{font-family:var(--font-display);font-size:0.95rem;font-weight:700;color:var(--ink);}
+    .sec-header a{font-size:0.8rem;color:var(--clay);text-decoration:none;font-weight:600;}
+
+    /* PG Grid */
+    .pg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:15px;}
+    .pg-card{background:var(--white);border-radius:var(--radius-tag-sm);border:1px solid var(--line);box-shadow:var(--shadow-card);overflow:hidden;transition:all .2s;}
+    .pg-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift);}
+    .pg-thumb{height:110px;display:flex;align-items:center;justify-content:center;font-size:2.6rem;position:relative;}
+    .status-pill{position:absolute;top:8px;right:8px;padding:3px 10px;border-radius:100px;font-size:0.63rem;font-weight:700;color:white;}
+    .sp-active{background:rgba(47,107,79,0.85);}
+    .sp-inactive{background:rgba(107,98,88,0.85);}
+    .pg-body{padding:13px 15px;}
+    .pg-body h3{font-family:var(--font-display);font-size:0.88rem;font-weight:700;color:var(--ink);margin-bottom:3px;}
+    .pg-body p{font-size:0.73rem;color:var(--ink-soft);margin-bottom:8px;}
+    .pg-rent{font-family:var(--font-display);font-size:0.92rem;font-weight:700;color:var(--clay);margin-bottom:9px;}
+    .pg-actions{display:flex;gap:5px;}
+
+    /* Add PG card */
+    .add-pg-card{background:var(--white);border-radius:var(--radius-tag-sm);border:2px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;text-decoration:none;color:var(--ink-soft);transition:all .2s;min-height:200px;}
+    .add-pg-card:hover{border-color:var(--clay);color:var(--clay);}
+    .add-pg-card .plus{font-size:1.8rem;margin-bottom:8px;}
+    .add-pg-card span{font-size:0.8rem;font-weight:600;}
+
+    /* Booking items */
+    .booking-item{background:var(--white);border-radius:var(--radius-tag-sm);border:1px solid var(--line);padding:15px 20px;margin-bottom:10px;display:flex;align-items:center;gap:13px;box-shadow:var(--shadow-card);}
+    .b-av{width:38px;height:38px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.88rem;flex-shrink:0;}
+    .b-info{flex:1;}
+    .b-info strong{display:block;font-size:0.86rem;font-weight:700;color:var(--ink);margin-bottom:2px;}
+    .b-info .bmeta{font-size:0.73rem;color:var(--ink-soft);}
+    .b-info .bmeta a{color:var(--clay);text-decoration:none;}
+    .b-actions{display:flex;gap:6px;align-items:center;}
+
+    @media(max-width:768px){.stats{grid-template-columns:1fr 1fr;}.content,.stats,.page-header{padding-left:20px;padding-right:20px;}.pg-grid{grid-template-columns:1fr;}.rs-navbar{padding:0 20px;}}
+  </style>
+</head>
+<body>
+  <nav class="rs-navbar">
+    <a href="/" class="rs-logo">Room<span>sy</span></a>
+    <div class="nav">
+      <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode">
+        <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
+      </button>
+      <a href="/owner/bookings">Booking requests</a>
+      <a href="/owner/pg/add" class="btn btn-clay btn-sm">+ List new PG</a>
+      <a href="/logout" style="background:rgba(199,93,59,0.15);border:1px solid rgba(199,93,59,0.3);">Logout</a>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1>🏠 Owner dashboard</h1>
+    <p>Welcome back, <strong th:text="${owner.fullName}">Owner</strong> — manage your PG listings and booking requests.</p>
+  </div>
+  <div class="flash alert alert-success" th:if="${successMsg}" th:text="${successMsg}"></div>
+
+  <div class="stats">
+    <div class="stat"><div class="si si-pg">🏠</div><div><div class="sn" th:text="${totalPgs}">0</div><div class="sl">My listings</div></div></div>
+    <div class="stat"><div class="si si-p">⏳</div><div><div class="sn" th:text="${pendingCount}">0</div><div class="sl">Pending requests</div></div></div>
+    <div class="stat"><div class="si si-c">✅</div><div><div class="sn" th:text="${confirmedCount}">0</div><div class="sl">Confirmed visits</div></div></div>
+  </div>
+
+  <div class="content">
+    <!-- MY PG LISTINGS -->
+    <div class="sec-header">
+      <h2>🏠 My PG listings</h2>
+      <a href="/owner/pg/add">+ Add new</a>
+    </div>
+    <div class="pg-grid">
+      <div th:each="pg, i : ${myPgs}" class="pg-card">
+        <div class="pg-thumb"
+             th:style="${pg.photoUrl != null and !pg.photoUrl.isEmpty()} ?
+                        'background:url(' + ${pg.photoUrl} + ') center/cover no-repeat' :
+                        (${i.index % 3 == 0} ? 'background:linear-gradient(135deg,#C75D3B,#A8472A)' :
+                        (${i.index % 3 == 1} ? 'background:linear-gradient(135deg,#2F6B4F,#1F4D38)' :
+                        'background:linear-gradient(135deg,#E8B04B,#C98F2E)'))">
+          <span th:if="${pg.photoUrl == null or pg.photoUrl.isEmpty()}">🏠</span>
+          <div class="status-pill"
+               th:classappend="${pg.status == 'Active'} ? 'sp-active' : 'sp-inactive'"
+               th:text="${pg.status}">Active</div>
+        </div>
+        <div class="pg-body">
+          <h3 th:text="${pg.pgName}">PG</h3>
+          <p th:text="${pg.location} + ', ' + ${pg.city}">Location</p>
+          <div class="pg-rent">₹<span th:text="${pg.rent}">0</span>/mo · <span th:text="${pg.roomType}">Single</span></div>
+          <div class="pg-actions">
+            <a th:href="@{/owner/pg/edit/{id}(id=${pg.id})}" class="btn btn-outline btn-sm">✏️ Edit</a>
+            <a th:href="@{/pg/{id}(id=${pg.id})}" class="btn btn-ghost btn-sm">👁 View</a>
+            <a th:href="@{/owner/pg/delete/{id}(id=${pg.id})}" class="btn btn-danger btn-sm"
+               onclick="return confirm('Delete this PG listing?')">🗑</a>
+          </div>
+        </div>
+      </div>
+      <a href="/owner/pg/add" class="add-pg-card">
+        <div class="plus">➕</div>
+        <span>List a new PG</span>
+      </a>
+    </div>
+
+    <!-- RECENT BOOKING REQUESTS -->
+    <div class="sec-header">
+      <h2>📅 Recent booking requests</h2>
+      <a href="/owner/bookings">View all</a>
+    </div>
+
+    <div style="text-align:center;padding:28px;color:var(--ink-soft);background:var(--white);border-radius:var(--radius-tag-sm);border:1px solid var(--line);font-size:0.85rem;"
+         th:if="${#lists.isEmpty(myBookings)}">
+      No booking requests yet. Once tenants find your PG, requests will appear here.
+    </div>
+
+    <div th:each="b : ${myBookings}" class="booking-item">
+      <div class="b-av" th:text="${#strings.substring(b.tenant.fullName,0,1)}">T</div>
+      <div class="b-info">
+        <strong th:text="${b.tenant.fullName}">Tenant</strong>
+        <div class="bmeta">
+          <span th:text="${b.pgListing.pgName}">PG</span> ·
+          Visit: <strong th:text="${b.visitDate}">Date</strong> ·
+          📞 <a th:href="'tel:' + ${b.tenant.phone}" th:text="${b.tenant.phone}">Phone</a>
+        </div>
+      </div>
+      <div class="b-actions">
+        <span class="pill" th:if="${b.status != 'PENDING'}"
+          th:classappend="${b.status == 'CONFIRMED'} ? 'pill-sage' : 'pill-clay'"
+          th:text="${b.status}">Status</span>
+        <th:block th:if="${b.status == 'PENDING'}">
+          <a th:href="@{/owner/booking/confirm/{id}(id=${b.id})}" class="btn btn-sage btn-sm">✅ Confirm</a>
+          <a th:href="@{/owner/booking/reject/{id}(id=${b.id})}" class="btn btn-danger btn-sm">❌ Reject</a>
+        </th:block>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

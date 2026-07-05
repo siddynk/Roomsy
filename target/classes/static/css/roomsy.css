@@ -1,0 +1,261 @@
+/* ============================================================
+   ROOMSY DESIGN SYSTEM
+   A warm, homely palette — built for a PG/hostel-finding platform.
+   Signature: "keytag" cards — asymmetric rounded corners that
+   echo a keychain tag, used on PG cards, stat tiles, and badges.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Color — light mode (default) */
+  --paper:      #FBF7F2;
+  --paper-dim:  #F3ECE3;
+  --ink:        #241F1C;
+  --ink-soft:   #6B6258;
+  --clay:       #C75D3B;
+  --clay-deep:  #A8472A;
+  --sage:       #2F6B4F;
+  --sage-soft:  #E7F1EA;
+  --gold:       #E8B04B;
+  --gold-soft:  #FBF0DA;
+  --line:       #E8DFD3;
+  --white:      #FFFFFF;
+  --surface:    #FFFFFF;   /* card/panel background */
+  --on-surface: #241F1C;   /* text that sits on --surface */
+
+  /* Type */
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Shape — the "keytag" signature: one corner intentionally
+     softer/larger than the others */
+  --radius-tag: 22px 10px 22px 10px;
+  --radius-tag-sm: 14px 7px 14px 7px;
+  --radius-pill: 100px;
+
+  --shadow-card: 0 4px 20px rgba(36, 31, 28, 0.06), 0 1px 2px rgba(36, 31, 28, 0.04);
+  --shadow-lift: 0 12px 32px rgba(36, 31, 28, 0.12);
+
+  color-scheme: light;
+
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* ── Dark mode — same warm clay/gold personality, deep
+   brown-black surfaces instead of cold neutral grays.
+   Activated by toggling data-theme="dark" on <html>,
+   controlled by the toggle button in the navbar. ── */
+html[data-theme="dark"] {
+  --paper:      #1C1714;
+  --paper-dim:  #241E1A;
+  --ink:        #F3ECE3;
+  --ink-soft:   #B3A89C;
+  --clay:       #E07A52;
+  --clay-deep:  #F0935F;
+  --sage:       #6FBE94;
+  --sage-soft:  #1E3329;
+  --gold:       #F0C46E;
+  --gold-soft:  #3A2E16;
+  --line:       #3A322B;
+  --white:      #2A2320;
+  --surface:    #2A2320;
+  --on-surface: #F3ECE3;
+
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-lift: 0 12px 32px rgba(0, 0, 0, 0.45);
+
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* ── Reduced motion respect ───────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Focus visibility (accessibility floor) ───────────────── */
+a:focus-visible, button:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 2px;
+}
+
+/* ── Navbar (shared look across all pages) ──────────────────
+   Deliberately NOT tied to --ink/--paper: the navbar should
+   stay a stable dark bar in both light and dark mode, so it
+   doesn't flip to a light bar when dark mode is active. ── */
+.rs-navbar {
+  background: #241F1C;
+  padding: 0 40px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+html[data-theme="dark"] .rs-navbar { background: #15110F; border-bottom: 1px solid #3A322B; }
+.rs-logo {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #FBF7F2;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+.rs-logo span { color: var(--clay); font-style: italic; }
+
+/* ── Theme toggle button ──────────────────────────────────── */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(251,247,242,0.18);
+  background: rgba(251,247,242,0.06);
+  color: #FBF7F2;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.15s ease, transform 0.15s ease;
+  line-height: 1;
+}
+.theme-toggle:hover { background: rgba(251,247,242,0.14); transform: translateY(-1px); }
+.theme-toggle .icon-dark { display: none; }
+html[data-theme="dark"] .theme-toggle .icon-light { display: none; }
+html[data-theme="dark"] .theme-toggle .icon-dark { display: inline; }
+
+/* ── Buttons ───────────────────────────────────────────────── */
+.btn {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.88rem;
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 12px 26px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.btn-clay { background: var(--clay); color: var(--white); }
+.btn-clay:hover { background: var(--clay-deep); transform: translateY(-1px); box-shadow: var(--shadow-lift); }
+.btn-ink { background: var(--ink); color: var(--paper); }
+.btn-ink:hover { background: #3a332e; transform: translateY(-1px); }
+.btn-outline { background: transparent; color: var(--ink); border: 2px solid var(--line); }
+.btn-outline:hover { border-color: var(--ink); }
+.btn-ghost { background: transparent; color: var(--ink-soft); }
+.btn-ghost:hover { color: var(--ink); background: var(--paper-dim); }
+.btn-sage { background: var(--sage-soft); color: var(--sage); border: 1px solid rgba(47,107,79,0.2); }
+.btn-sage:hover { background: var(--sage); color: white; }
+.btn-danger { background: rgba(199,93,59,0.08); color: var(--clay-deep); border: 1px solid rgba(199,93,59,0.2); }
+.btn-danger:hover { background: var(--clay); color: white; }
+.btn-sm { padding: 7px 16px; font-size: 0.78rem; }
+.btn-block { width: 100%; }
+
+/* ── Cards (keytag signature) ─────────────────────────────── */
+.rs-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-tag);
+  box-shadow: var(--shadow-card);
+}
+
+/* ── Badges / status pills ─────────────────────────────────── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 13px;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.pill-gold  { background: var(--gold-soft); color: #9A6B14; }
+.pill-sage  { background: var(--sage-soft); color: var(--sage); }
+.pill-clay  { background: rgba(199,93,59,0.1); color: var(--clay-deep); }
+.pill-muted { background: var(--paper-dim); color: var(--ink-soft); }
+
+/* ── Form fields ───────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.field label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--ink-soft);
+}
+.field label .req { color: var(--clay); }
+.field input, .field select, .field textarea {
+  font-family: var(--font-body);
+  padding: 12px 14px;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  font-size: 0.92rem;
+  color: var(--ink);
+  background: var(--paper-dim);
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  width: 100%;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--clay);
+  background: var(--white);
+}
+.field .hint { font-size: 0.72rem; color: var(--ink-soft); }
+.field .error-text { font-size: 0.72rem; color: var(--clay-deep); font-weight: 600; }
+
+/* ── Alerts / flash messages ──────────────────────────────── */
+.alert {
+  padding: 13px 18px;
+  border-radius: var(--radius-tag-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.alert-success { background: var(--sage-soft); color: var(--sage); border: 1px solid rgba(47,107,79,0.2); }
+.alert-error { background: rgba(199,93,59,0.08); color: var(--clay-deep); border: 1px solid rgba(199,93,59,0.2); }
+
+/* ── Section labels / headings ────────────────────────────── */
+.rs-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  color: var(--clay);
+  margin-bottom: 8px;
+}
+.rs-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+/* ── Empty states ──────────────────────────────────────────── */
+.rs-empty {
+  text-align: center;
+  padding: 56px 32px;
+  color: var(--ink-soft);
+}
+.rs-empty .rs-empty-icon { font-size: 2.4rem; margin-bottom: 12px; }
+.rs-empty h3 { font-family: var(--font-display); font-size: 1.1rem; color: var(--ink); margin-bottom: 6px; }
+.rs-empty p { font-size: 0.88rem; margin-bottom: 16px; }

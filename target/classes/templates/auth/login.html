@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script>(function(){var t=localStorage.getItem('roomsy-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — Roomsy</title>
+  <link rel="stylesheet" th:href="@{/css/roomsy.css}"/>
+  <script>
+    window.toggleRoomsyTheme=function(){var d=document.documentElement.getAttribute("data-theme")==="dark";if(d){document.documentElement.removeAttribute("data-theme");localStorage.setItem("roomsy-theme","light");}else{document.documentElement.setAttribute("data-theme","dark");localStorage.setItem("roomsy-theme","dark");}};
+  </script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--font-body);min-height:100vh;display:flex;background:var(--paper);color:var(--ink);}
+    .left{flex:1;background:#241F1C;display:flex;align-items:center;justify-content:center;padding:60px;position:relative;overflow:hidden;}
+    .left::before{content:'';position:absolute;width:380px;height:380px;background:var(--clay);border-radius:50%;opacity:0.18;top:-100px;right:-100px;filter:blur(70px);}
+    .left-content{z-index:1;max-width:380px;}
+    .logo{font-family:var(--font-display);font-size:2rem;font-weight:700;color:#FBF7F2;text-decoration:none;display:block;margin-bottom:28px;}
+    .logo span{color:var(--clay);font-style:italic;}
+    .left-content h2{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:#FBF7F2;margin-bottom:12px;line-height:1.25;}
+    .left-content p{color:rgba(251,247,242,0.6);line-height:1.7;margin-bottom:26px;font-size:0.88rem;}
+    .perk{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;color:rgba(251,247,242,0.85);}
+    .perk-icon{width:34px;height:34px;border-radius:9px;background:rgba(251,247,242,0.08);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;}
+    .perk strong{display:block;font-size:0.84rem;margin-bottom:2px;}
+    .perk span{font-size:0.74rem;color:rgba(251,247,242,0.5);}
+
+    .right{flex:0 0 460px;display:flex;align-items:center;justify-content:center;padding:40px 44px;background:var(--paper);position:relative;}
+    .theme-toggle-corner{position:absolute;top:24px;right:24px;}
+    .form-box{width:100%;}
+    .form-box h3{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--ink);margin-bottom:4px;}
+    .form-box .sub{font-size:0.84rem;color:var(--ink-soft);margin-bottom:24px;}
+    .fg{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+    .fg label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--ink-soft);}
+    .fg input{padding:11px 14px;border:2px solid var(--line);border-radius:10px;font-family:var(--font-body);font-size:0.9rem;outline:none;background:var(--paper-dim);color:var(--ink);transition:border-color .15s;}
+    .fg input:focus{border-color:var(--clay);background:var(--white);}
+    .switch{text-align:center;margin-top:16px;font-size:0.82rem;color:var(--ink-soft);}
+    .switch a{color:var(--clay);font-weight:700;text-decoration:none;}
+    @media(max-width:800px){body{flex-direction:column;}.left{display:none;}.right{flex:1;padding:40px 24px;}}
+  </style>
+</head>
+<body>
+  <div class="left">
+    <div class="left-content">
+      <a href="/" class="logo">Room<span>sy</span></a>
+      <h2>Find your perfect PG</h2>
+      <p>Join thousands of students and professionals who found their PG without a broker.</p>
+      <div class="perk"><div class="perk-icon">🛡️</div><div><strong>Verified listings</strong><span>Every PG verified before going live</span></div></div>
+      <div class="perk"><div class="perk-icon">💸</div><div><strong>Zero commission</strong><span>Save ₹15,000+ in broker fees</span></div></div>
+      <div class="perk"><div class="perk-icon">📞</div><div><strong>Direct contact</strong><span>Talk to owners directly</span></div></div>
+      <div class="perk"><div class="perk-icon">📅</div><div><strong>Book visits</strong><span>Schedule visits in one click</span></div></div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="theme-toggle-corner">
+      <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode" title="Toggle dark mode"
+              style="border-color:var(--line);color:var(--ink);background:var(--paper-dim);">
+        <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
+      </button>
+    </div>
+    <div class="form-box">
+      <h3>Welcome back 👋</h3>
+      <p class="sub">Login to continue your PG search</p>
+      <div class="alert alert-error" th:if="${error}" th:text="${error}" style="margin-bottom:16px;"></div>
+      <div class="alert alert-success" th:if="${successMsg}" th:text="${successMsg}" style="margin-bottom:16px;"></div>
+      <form action="/login" method="post">
+        <div class="fg"><label>Email address</label><input type="email" name="email" placeholder="you@example.com" required/></div>
+        <div class="fg"><label>Password</label><input type="password" name="password" placeholder="Your password" required/></div>
+        <button type="submit" class="btn btn-clay btn-block">Login →</button>
+      </form>
+      <div class="switch">Don't have an account? <a href="/register">Sign up free</a></div>
+      <div class="switch" style="margin-top:8px;"><a href="/admin/login" style="color:var(--ink-soft);">Admin login →</a></div>
+    </div>
+  </div>
+</body>
+</html>

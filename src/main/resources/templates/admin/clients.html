@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script>(function(){var t=localStorage.getItem('roomsy-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clients — Roomsy Admin</title>
+  <link rel="stylesheet" th:href="@{/css/roomsy.css}"/>
+  <script th:src="@{/js/theme.js}" defer></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--font-body);background:var(--paper);color:var(--ink);display:flex;}
+    .sidebar{width:220px;background:#1C1714;min-height:100vh;position:sticky;top:0;flex-shrink:0;display:flex;flex-direction:column;}
+    .sb-top{padding:22px 20px;border-bottom:1px solid rgba(251,247,242,0.07);}
+    .sb-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:#FBF7F2;text-decoration:none;display:block;}
+    .sb-logo span{color:var(--clay);font-style:italic;}
+    .sb-badge{font-size:0.62rem;color:rgba(251,247,242,0.35);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-top:3px;}
+    .sb-nav{padding:14px 0;flex:1;}
+    .sb-section{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:rgba(251,247,242,0.28);padding:10px 20px 5px;}
+    .sb-link{display:flex;align-items:center;gap:10px;padding:9px 20px;color:rgba(251,247,242,0.6);text-decoration:none;font-size:0.82rem;font-weight:500;transition:all .18s;border-left:3px solid transparent;}
+    .sb-link:hover{background:rgba(251,247,242,0.06);color:#FBF7F2;}
+    .sb-link.active{background:rgba(199,93,59,0.12);color:var(--clay);border-left-color:var(--clay);}
+    .sb-bottom{padding:14px 20px;border-top:1px solid rgba(251,247,242,0.07);}
+    .sb-bottom a{color:rgba(251,247,242,0.45);text-decoration:none;font-size:0.78rem;}
+    .sb-bottom a:hover{color:#FBF7F2;}
+    .main{flex:1;overflow:auto;min-width:0;}
+    .topbar{background:var(--white);padding:15px 30px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+    .topbar h1{font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--ink);}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .admin-tag{background:rgba(199,93,59,0.1);color:var(--clay);padding:4px 12px;border-radius:100px;font-size:0.7rem;font-weight:700;border:1px solid rgba(199,93,59,0.2);}
+    .flash{margin:14px 30px 0;padding:12px 16px;border-radius:var(--radius-tag-sm);}
+
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;padding:16px 30px;}
+    .stat{background:var(--white);border-radius:var(--radius-tag-sm);padding:15px 17px;border:1px solid var(--line);box-shadow:var(--shadow-card);display:flex;align-items:center;gap:11px;}
+    .si{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+    .si-t{background:rgba(36,31,28,0.06);}
+    .si-s{background:var(--gold-soft);}
+    .si-p{background:var(--sage-soft);}
+    .si-i{background:var(--paper-dim);}
+    html[data-theme="dark"] .si-t{background:rgba(251,247,242,0.08);}
+    .sn{font-family:var(--font-display);font-size:1.4rem;font-weight:700;line-height:1;color:var(--ink);}
+    .sl{font-size:0.64rem;color:var(--ink-soft);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-top:2px;}
+
+    .content{padding:0 30px 60px;}
+    .controls{display:flex;gap:9px;flex-wrap:wrap;align-items:center;padding:14px 0;}
+    .search-wrap{display:flex;align-items:center;gap:0;border:2px solid var(--line);border-radius:10px;background:var(--white);overflow:hidden;flex:1;min-width:180px;max-width:300px;}
+    .search-wrap span{padding:0 11px;font-size:1rem;color:var(--ink-soft);}
+    .search-wrap input{flex:1;padding:9px 9px 9px 0;border:none;outline:none;font-family:var(--font-body);font-size:0.84rem;background:transparent;color:var(--ink);}
+    .filter-sel{padding:9px 13px;border:2px solid var(--line);border-radius:10px;background:var(--white);font-family:var(--font-body);font-size:0.84rem;outline:none;cursor:pointer;color:var(--ink);}
+    .filter-sel:focus{border-color:var(--clay);}
+    .result-info{margin-left:auto;font-size:0.76rem;color:var(--ink-soft);}
+
+    .table-wrap{background:var(--white);border-radius:var(--radius-tag-sm);border:1px solid var(--line);box-shadow:var(--shadow-card);overflow:hidden;}
+    table{width:100%;border-collapse:collapse;}
+    thead{background:var(--ink);}
+    thead th{padding:11px 15px;text-align:left;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:rgba(251,247,242,0.8);}
+    tbody tr{border-bottom:1px solid var(--paper-dim);transition:background .15s;}
+    tbody tr:last-child{border-bottom:none;}
+    tbody tr:hover{background:var(--paper-dim);}
+    tbody td{padding:11px 15px;font-size:0.8rem;color:var(--ink);}
+    .client-name{font-weight:700;display:block;}
+    .client-email{font-size:0.7rem;color:var(--ink-soft);}
+    .actions{display:flex;gap:5px;}
+
+    .empty{text-align:center;padding:44px;color:var(--ink-soft);}
+
+    @media(max-width:900px){body{flex-direction:column;}.sidebar{width:100%;min-height:auto;position:static;}.stats{grid-template-columns:1fr 1fr;}.content,.topbar,.stats,.flash{padding-left:16px;padding-right:16px;}table{display:block;overflow-x:auto;}}
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sb-top"><a href="/" class="sb-logo">Room<span>sy</span></a><div class="sb-badge">Admin panel</div></div>
+    <div class="sb-nav">
+      <div class="sb-section">Main</div>
+      <a href="/admin/dashboard" class="sb-link">📊 Dashboard</a>
+      <div class="sb-section">Manage</div>
+      <a href="/admin/clients"  class="sb-link active">👥 Clients</a>
+      <div class="sb-section">Site</div>
+      <a href="/" class="sb-link" target="_blank">🌐 Public site</a>
+    </div>
+    <div class="sb-bottom"><a href="/admin/logout">🚪 Logout</a></div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h1>👥 Client management</h1>
+      <div class="topbar-right">
+        <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode"
+                style="border-color:var(--line);color:var(--ink);background:var(--paper-dim);">
+          <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
+        </button>
+        <span class="admin-tag" th:text="'🔐 ' + ${adminName}">Admin</span>
+      </div>
+    </div>
+    <div class="flash alert alert-success" th:if="${successMsg}" th:text="${successMsg}"></div>
+
+    <div class="stats">
+      <div class="stat"><div class="si si-t">👥</div><div><div class="sn" th:text="${totalClients}">0</div><div class="sl">Total</div></div></div>
+      <div class="stat"><div class="si si-s">🔍</div><div><div class="sn" th:text="${searching}">0</div><div class="sl">Searching</div></div></div>
+      <div class="stat"><div class="si si-p">✅</div><div><div class="sn" th:text="${placed}">0</div><div class="sl">Placed</div></div></div>
+      <div class="stat"><div class="si si-i">💤</div><div><div class="sn" th:text="${inactive}">0</div><div class="sl">Inactive</div></div></div>
+    </div>
+
+    <div class="content">
+      <form action="/admin/clients" method="get">
+        <div class="controls">
+          <div class="search-wrap">
+            <span>🔍</span>
+            <input type="text" name="keyword" th:value="${keyword}" placeholder="Search name, email, location..."/>
+          </div>
+          <select name="status" class="filter-sel" onchange="this.form.submit()">
+            <option value="All"       th:selected="${selectedStatus=='All'}">All status</option>
+            <option value="Searching" th:selected="${selectedStatus=='Searching'}">🔍 Searching</option>
+            <option value="Placed"    th:selected="${selectedStatus=='Placed'}">✅ Placed</option>
+            <option value="Inactive"  th:selected="${selectedStatus=='Inactive'}">💤 Inactive</option>
+          </select>
+          <button type="submit" class="btn btn-ink btn-sm">Search</button>
+          <a href="/admin/clients" style="font-size:0.76rem;color:var(--ink-soft);text-decoration:none;">Clear</a>
+          <span class="result-info" th:text="${resultCount} + ' result(s)'">0 results</span>
+        </div>
+      </form>
+
+      <div class="table-wrap">
+        <div class="empty" th:if="${#lists.isEmpty(clients)}">
+          <p>No clients found. Try adjusting your search.</p>
+        </div>
+        <table th:if="${!#lists.isEmpty(clients)}">
+          <thead>
+            <tr><th>#</th><th>Client</th><th>Phone</th><th>Location</th><th>Budget</th><th>Room</th><th>Status</th><th>PG name</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            <tr th:each="c : ${clients}">
+              <td style="color:var(--ink-soft);font-size:0.7rem;" th:text="${c.id}">#</td>
+              <td>
+                <span class="client-name" th:text="${c.user.fullName}">Name</span>
+                <span class="client-email" th:text="${c.user.email}">email</span>
+              </td>
+              <td style="font-size:0.76rem;" th:text="${c.user.phone}">Phone</td>
+              <td style="font-size:0.76rem;color:var(--ink-soft);" th:text="${c.preferredLocation}">Loc</td>
+              <td style="font-weight:700;color:var(--clay);" th:text="'₹' + ${c.budget}">₹0</td>
+              <td style="font-size:0.76rem;" th:text="${c.roomType}">Type</td>
+              <td>
+                <span class="pill"
+                  th:classappend="${c.status=='Searching'} ? 'pill-gold' :
+                                  (${c.status=='Placed'} ? 'pill-sage' : 'pill-muted')"
+                  th:text="${c.status}">Status</span>
+              </td>
+              <td style="font-size:0.74rem;color:var(--ink-soft);" th:text="${c.pgName!=null?c.pgName:'—'}">—</td>
+              <td>
+                <div class="actions">
+                  <a th:href="@{/admin/clients/{id}(id=${c.id})}"      class="btn btn-ghost btn-sm">👁</a>
+                  <a th:href="@{/admin/clients/edit/{id}(id=${c.id})}" class="btn btn-outline btn-sm">✏️</a>
+                  <a th:href="@{/admin/clients/delete/{id}(id=${c.id})}" class="btn btn-danger btn-sm"
+                     th:onclick="'return confirm(\'Delete ' + ${c.user.fullName} + '?\')'">🗑</a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script>(function(){var t=localStorage.getItem('roomsy-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${pg.pgName} + ' — Roomsy'">PG Detail — Roomsy</title>
+  <link rel="stylesheet" th:href="@{/css/roomsy.css}"/>
+  <script th:src="@{/js/theme.js}" defer></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--font-body);background:var(--paper);color:var(--ink);}
+    .nav{display:flex;gap:16px;align-items:center;}
+    .nav a{color:rgba(251,247,242,0.78);text-decoration:none;font-weight:500;font-size:0.85rem;}
+
+    .wrap{max-width:1100px;margin:0 auto;padding:32px 40px 80px;}
+    .breadcrumb{font-size:0.78rem;color:var(--ink-soft);margin-bottom:22px;}
+    .breadcrumb a{color:var(--clay);text-decoration:none;}
+
+    .gallery{height:280px;border-radius:var(--radius-tag);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:5.5rem;margin-bottom:26px;}
+
+    .detail-layout{display:flex;gap:26px;align-items:flex-start;}
+    .detail-main{flex:1;}
+    .detail-sidebar{width:320px;flex-shrink:0;}
+
+    .card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius-tag-sm);box-shadow:var(--shadow-card);padding:22px 26px;margin-bottom:18px;}
+    .card h2{font-family:var(--font-display);font-size:0.95rem;font-weight:700;color:var(--ink);margin-bottom:15px;padding-bottom:9px;border-bottom:2px solid var(--paper-dim);}
+
+    .pg-header-card .pg-name{font-family:var(--font-display);font-size:1.55rem;font-weight:700;color:var(--ink);margin-bottom:6px;}
+    .pg-header-card .pg-loc{font-size:0.86rem;color:var(--ink-soft);margin-bottom:12px;}
+    .meta-row{display:flex;gap:9px;flex-wrap:wrap;}
+
+    .amenities-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
+    .am{background:var(--paper-dim);border-radius:9px;padding:9px 13px;font-size:0.78rem;font-weight:500;text-align:center;border:1px solid var(--line);}
+
+    .description p{font-size:0.86rem;color:var(--ink-soft);line-height:1.8;}
+
+    .owner-box{display:flex;gap:14px;align-items:center;padding:15px;background:var(--paper-dim);border-radius:11px;border:1px solid var(--line);}
+    .owner-av{width:46px;height:46px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;flex-shrink:0;}
+    .owner-info strong{display:block;font-size:0.88rem;color:var(--ink);}
+    .owner-info span{font-size:0.76rem;color:var(--ink-soft);}
+    .owner-phone{font-size:0.86rem;font-weight:700;color:var(--clay);margin-top:4px;}
+
+    .booking-card{border:2px solid var(--clay);}
+    .price-big{text-align:center;padding:15px;background:var(--paper-dim);border-radius:11px;margin-bottom:15px;}
+    .price-big .amount{font-family:var(--font-display);font-size:1.9rem;font-weight:700;color:var(--clay);}
+    .price-big small{font-size:0.76rem;color:var(--ink-soft);}
+    .avail-dot{display:flex;align-items:center;gap:8px;font-size:0.8rem;font-weight:600;color:var(--sage);background:var(--sage-soft);padding:8px 14px;border-radius:9px;margin-bottom:13px;}
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--sage);animation:pulse 1.5s infinite;}
+    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+    .login-prompt{background:rgba(199,93,59,0.06);border:1px solid rgba(199,93,59,0.2);border-radius:9px;padding:14px;text-align:center;font-size:0.82rem;color:var(--ink-soft);}
+    .login-prompt a{color:var(--clay);font-weight:700;text-decoration:none;}
+
+    .info-rows{display:flex;flex-direction:column;gap:7px;margin-top:15px;}
+    .ir{display:flex;justify-content:space-between;font-size:0.8rem;padding:6px 0;border-bottom:1px solid var(--paper-dim);}
+    .ir span:first-child{color:var(--ink-soft);}
+    .ir span:last-child{font-weight:600;color:var(--ink);}
+
+    .btn-wa{background:#25D366;color:white;}
+    .btn-wa:hover{background:#1da851;}
+
+    /* REVIEWS */
+    .stars-display{color:#E8B04B;font-size:1.1rem;letter-spacing:2px;}
+    .avg-rating{font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--ink);}
+    .review-item{padding:16px 0;border-bottom:1px solid var(--paper-dim);}
+    .review-item:last-child{border-bottom:none;}
+    .review-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;}
+    .reviewer{display:flex;align-items:center;gap:10px;}
+    .r-av{width:36px;height:36px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0;}
+    .r-name{font-weight:700;font-size:0.86rem;color:var(--ink);}
+    .r-date{font-size:0.7rem;color:var(--ink-soft);}
+    .r-stars{color:#E8B04B;font-size:0.95rem;}
+    .r-comment{font-size:0.84rem;color:var(--ink-soft);line-height:1.65;margin-top:6px;}
+
+    /* Star rating input */
+    .star-input{display:flex;flex-direction:row-reverse;justify-content:flex-end;gap:4px;margin-bottom:4px;}
+    .star-input input{display:none;}
+    .star-input label{font-size:1.8rem;color:var(--line);cursor:pointer;transition:color .15s;}
+    .star-input input:checked ~ label,
+    .star-input label:hover,
+    .star-input label:hover ~ label{color:#E8B04B;}
+
+    @media(max-width:900px){.detail-layout{flex-direction:column;}.detail-sidebar{width:100%;}.wrap{padding:20px;}.amenities-grid{grid-template-columns:repeat(2,1fr);}.rs-navbar{padding:0 20px;}}
+  </style>
+</head>
+<body>
+
+  <nav class="rs-navbar">
+    <a href="/" class="rs-logo">Room<span>sy</span></a>
+    <div class="nav">
+      <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
+      </button>
+      <a href="/listings">← Browse PGs</a>
+      <th:block th:if="${!isLoggedIn}">
+        <a href="/login">Login</a>
+        <a href="/register" class="btn btn-clay btn-sm">Register</a>
+      </th:block>
+      <th:block th:if="${isLoggedIn}">
+        <a th:href="${currentUser.role == 'TENANT'} ? '/tenant/dashboard' : '/owner/dashboard'"
+           th:text="'Hi, ' + ${currentUser.fullName.split(' ')[0]}">Hi</a>
+        <a href="/logout" class="btn btn-outline btn-sm" style="color:#FBF7F2;border-color:rgba(251,247,242,0.25);">Logout</a>
+      </th:block>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <div class="breadcrumb">
+      <a href="/">Home</a> › <a href="/listings">Browse PGs</a> › <span th:text="${pg.pgName}">PG</span>
+    </div>
+
+    <div class="gallery"
+         th:style="${pg.photoUrl != null and !pg.photoUrl.isEmpty()} ?
+                    'background:url(' + ${pg.photoUrl} + ') center/cover no-repeat;font-size:0' :
+                    'background:linear-gradient(135deg,#C75D3B,#A8472A)'">
+      <span th:if="${pg.photoUrl == null or pg.photoUrl.isEmpty()}">🏠</span>
+    </div>
+
+    <div class="detail-layout">
+      <div class="detail-main">
+
+        <div class="card pg-header-card">
+          <div class="pg-name" th:text="${pg.pgName}">PG Name</div>
+          <div class="pg-loc">📍 <span th:text="${pg.location}"></span>, <span th:text="${pg.city}"></span></div>
+          <div class="meta-row">
+            <span class="pill pill-muted" th:text="'👤 ' + ${pg.gender}">Gender</span>
+            <span class="pill pill-muted" th:text="'🛏️ ' + ${pg.roomType}">Room</span>
+            <span class="pill pill-sage">✅ Verified</span>
+            <span class="pill pill-muted" th:text="'📞 ' + ${pg.phone}">Phone</span>
+            <span th:if="${avgRating != null}" class="pill pill-gold"
+                  th:text="'⭐ ' + ${avgRating} + ' (' + ${reviewCount} + ' reviews)'">Rating</span>
+            <span th:if="${avgRating == null}" class="pill pill-muted">⭐ No reviews yet</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>✨ Amenities</h2>
+          <div class="amenities-grid">
+            <div th:each="a : ${pg.amenitiesList}" class="am" th:text="${a.trim()}">Amenity</div>
+          </div>
+        </div>
+
+        <div class="card description">
+          <h2>📝 About this PG</h2>
+          <p th:text="${pg.description}">Description</p>
+        </div>
+
+        <div class="card">
+          <h2>👤 Owner</h2>
+          <div class="owner-box">
+            <div class="owner-av" th:text="${#strings.substring(pg.owner.fullName,0,1)}">O</div>
+            <div class="owner-info">
+              <strong th:text="${pg.owner.fullName}">Owner Name</strong>
+              <span>PG owner · Member since 2024</span>
+              <div th:if="${isLoggedIn}" class="owner-phone">
+                📞 <span th:text="${pg.phone}">Phone</span>
+              </div>
+              <div th:if="${!isLoggedIn}" style="font-size:0.74rem;color:var(--ink-soft);margin-top:4px;">
+                <a href="/login" style="color:var(--clay);font-weight:700;text-decoration:none;">Login</a> to see phone number
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- REVIEWS SECTION -->
+        <div class="card">
+          <h2>⭐ Reviews
+            <span th:if="${avgRating != null}" style="font-weight:400;font-size:0.82rem;color:var(--ink-soft);"
+                  th:text="'— ' + ${avgRating} + '/5 from ' + ${reviewCount} + ' review(s)'"></span>
+          </h2>
+
+          <!-- REVIEW FORM -->
+          <div th:if="${canReview}" style="background:var(--paper-dim);border-radius:11px;padding:16px 18px;margin-bottom:18px;border:1px solid var(--line);">
+            <p style="font-size:0.82rem;font-weight:700;color:var(--ink);margin-bottom:12px;">✍️ Write your review</p>
+            <form th:action="@{/tenant/review/{id}(id=${pg.id})}" method="post">
+              <div style="margin-bottom:12px;">
+                <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--ink-soft);margin-bottom:6px;">Your rating <span style="color:var(--clay);">*</span></div>
+                <div class="star-input">
+                  <input type="radio" id="s5" name="rating" value="5" required/><label for="s5">★</label>
+                  <input type="radio" id="s4" name="rating" value="4"/><label for="s4">★</label>
+                  <input type="radio" id="s3" name="rating" value="3"/><label for="s3">★</label>
+                  <input type="radio" id="s2" name="rating" value="2"/><label for="s2">★</label>
+                  <input type="radio" id="s1" name="rating" value="1"/><label for="s1">★</label>
+                </div>
+              </div>
+              <div style="margin-bottom:12px;">
+                <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--ink-soft);margin-bottom:6px;">Your comment</div>
+                <textarea name="comment" placeholder="How was your experience at this PG? Food, safety, cleanliness..."
+                          style="width:100%;padding:10px 13px;border:2px solid var(--line);border-radius:9px;font-family:var(--font-body);font-size:0.86rem;resize:vertical;min-height:80px;outline:none;background:var(--white);color:var(--ink);"></textarea>
+              </div>
+              <button type="submit" class="btn btn-clay btn-sm">Submit review →</button>
+            </form>
+          </div>
+
+          <!-- ALREADY REVIEWED -->
+          <div th:if="${hasReviewed}" style="background:var(--sage-soft);border-radius:9px;padding:11px 14px;margin-bottom:14px;font-size:0.82rem;color:var(--sage);border:1px solid rgba(47,107,79,0.2);">
+            ✅ You've already reviewed this PG.
+          </div>
+
+          <!-- NOT ELIGIBLE -->
+          <div th:if="${isTenant and !canReview and !hasReviewed}" style="background:var(--gold-soft);border-radius:9px;padding:11px 14px;margin-bottom:14px;font-size:0.82rem;color:#9A6B14;border:1px solid rgba(232,176,75,0.3);">
+            ℹ️ You can review this PG after your visit is confirmed by the owner.
+          </div>
+
+          <!-- NOT LOGGED IN -->
+          <div th:if="${!isLoggedIn}" style="background:var(--paper-dim);border-radius:9px;padding:11px 14px;margin-bottom:14px;font-size:0.82rem;color:var(--ink-soft);border:1px solid var(--line);">
+            <a href="/login" style="color:var(--clay);font-weight:700;text-decoration:none;">Login</a> to write a review after your confirmed visit.
+          </div>
+
+          <!-- REVIEW LIST -->
+          <div th:if="${#lists.isEmpty(reviews)}" style="text-align:center;padding:24px;color:var(--ink-soft);font-size:0.85rem;">
+            No reviews yet. Be the first to review this PG!
+          </div>
+          <div th:each="r : ${reviews}" class="review-item">
+            <div class="review-header">
+              <div class="reviewer">
+                <div class="r-av" th:text="${#strings.substring(r.tenant.fullName,0,1)}">T</div>
+                <div>
+                  <div class="r-name" th:text="${r.tenant.fullName}">Name</div>
+                  <div class="r-date" th:text="${#temporals.format(r.createdAt,'dd MMM yyyy')}">Date</div>
+                </div>
+              </div>
+              <div class="r-stars" th:text="${r.stars}">★★★★★</div>
+            </div>
+            <div class="r-comment" th:if="${r.comment != null and !r.comment.isEmpty()}" th:text="${r.comment}">Comment</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="detail-sidebar">
+        <div class="card booking-card">
+          <div class="price-big">
+            <div class="amount">₹<span th:text="${pg.rent}">0</span></div>
+            <small>per month · <span th:text="${pg.roomType}">Single</span> room</small>
+          </div>
+          <div class="avail-dot"><div class="dot"></div>Rooms available</div>
+
+          <th:block th:if="${isTenant}">
+            <a th:href="@{/tenant/book/{id}(id=${pg.id})}" class="btn btn-clay btn-block" style="margin-bottom:9px;">📅 Book a visit</a>
+            <a th:href="'tel:' + ${pg.phone}" class="btn btn-outline btn-block" style="margin-bottom:9px;">📞 Call owner</a>
+            <a th:href="'https://wa.me/91' + ${pg.phone}" class="btn btn-wa btn-block">💬 WhatsApp owner</a>
+          </th:block>
+
+          <th:block th:if="${!isLoggedIn}">
+            <div class="login-prompt">
+              <p>🔐 <a href="/login">Login</a> or <a href="/register">Register</a> to book a visit and contact the owner directly.</p>
+            </div>
+          </th:block>
+
+          <th:block th:if="${isLoggedIn and !isTenant}">
+            <div class="login-prompt">
+              <p>You're logged in as an owner. <a href="/listings">Browse as a tenant</a></p>
+            </div>
+          </th:block>
+
+          <div class="info-rows">
+            <div class="ir"><span>Deposit</span><span>1 month rent</span></div>
+            <div class="ir"><span>Notice period</span><span>1 month</span></div>
+            <div class="ir"><span>Gender</span><span th:text="${pg.gender}">Any</span></div>
+            <div class="ir"><span>Room type</span><span th:text="${pg.roomType}">Single</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

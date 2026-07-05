@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script th:inline="javascript">
+    (function(){var t=localStorage.getItem('roomsy-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}})();
+  </script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Roomsy — Find Your Perfect PG</title>
+  <link rel="stylesheet" th:href="@{/css/roomsy.css}"/>
+  <script th:src="@{/js/theme.js}" defer></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--font-body);background:var(--paper);color:var(--ink);}
+    a{text-decoration:none;}
+    .nav{display:flex;align-items:center;gap:18px;}
+    .nav a{color:rgba(251,247,242,0.78);text-decoration:none;font-weight:500;font-size:0.88rem;}
+    .nav a:hover{color:var(--paper);}
+    .hero{padding:64px 60px 0;display:grid;grid-template-columns:1.1fr 0.9fr;gap:48px;align-items:center;min-height:92vh;position:relative;overflow:hidden;}
+    .hero-copy{position:relative;z-index:1;}
+    .hero h1{font-family:var(--font-display);font-size:clamp(2.4rem,4.4vw,3.6rem);font-weight:700;line-height:1.08;letter-spacing:-0.01em;color:var(--ink);margin:14px 0 18px;}
+    .hero h1 em{font-style:italic;color:var(--clay);}
+    .hero-sub{font-size:1.02rem;color:var(--ink-soft);line-height:1.7;margin-bottom:32px;max-width:480px;}
+    .search-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius-tag);padding:22px;box-shadow:var(--shadow-lift);}
+    .search-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+    .sf{flex:1;min-width:130px;}
+    .sf label{display:block;font-size:0.68rem;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+    .sf input,.sf select{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:9px;font-family:var(--font-body);font-size:0.86rem;outline:none;background:var(--paper-dim);transition:border-color .15s;}
+    .sf input:focus,.sf select:focus{border-color:var(--clay);background:white;}
+    .hero-stats{display:flex;gap:0;margin-top:30px;}
+    .hero-stats .hs{flex:1;padding-right:22px;border-right:1px solid var(--line);}
+    .hero-stats .hs:last-child{border-right:none;padding-right:0;}
+    .hs-num{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--ink);}
+    .hs-label{font-size:0.72rem;color:var(--ink-soft);margin-top:2px;}
+    .hero-visual{position:relative;height:480px;display:flex;align-items:center;justify-content:center;}
+    .float-card{position:absolute;background:white;border:1px solid var(--line);border-radius:var(--radius-tag);box-shadow:var(--shadow-lift);padding:16px 18px;width:230px;}
+    .fc1{top:20px;right:10px;transform:rotate(3deg);}
+    .fc2{top:170px;left:-10px;transform:rotate(-2deg);z-index:2;}
+    .fc3{bottom:30px;right:30px;transform:rotate(2deg);}
+    .fc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+    .fc-name{font-weight:700;font-size:0.88rem;}
+    .fc-loc{font-size:0.74rem;color:var(--ink-soft);margin-bottom:8px;}
+    .fc-price{font-family:var(--font-display);font-weight:700;color:var(--clay);font-size:1.05rem;}
+    .section{padding:88px 60px;}
+    .section-head{margin-bottom:44px;max-width:560px;}
+    .pgs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:22px;margin-bottom:36px;}
+    .pg-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius-tag);box-shadow:var(--shadow-card);overflow:hidden;transition:transform .2s ease, box-shadow .2s ease;}
+    .pg-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lift);}
+    .pg-thumb{height:150px;display:flex;align-items:center;justify-content:center;font-size:3.4rem;position:relative;}
+    .pg-thumb-badge{position:absolute;top:11px;left:11px;background:rgba(36,31,28,0.6);color:white;padding:4px 11px;border-radius:100px;font-size:0.68rem;font-weight:700;}
+    .pg-body{padding:18px;}
+    .pg-name{font-family:var(--font-display);font-size:1.04rem;font-weight:700;color:var(--ink);margin-bottom:3px;}
+    .pg-loc{font-size:0.78rem;color:var(--ink-soft);margin-bottom:10px;}
+    .pg-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:13px;}
+    .tag{background:var(--paper-dim);padding:3px 9px;border-radius:100px;font-size:0.68rem;font-weight:500;border:1px solid var(--line);}
+    .pg-footer{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+    .pg-price{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--clay);}
+    .pg-price small{font-family:var(--font-body);font-size:0.68rem;font-weight:400;color:var(--ink-soft);}
+    .features{background:var(--white);}
+    .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+    .feat{background:var(--paper-dim);border-radius:var(--radius-tag-sm);padding:26px;border:1px solid var(--line);transition:border-color .2s;}
+    .feat:hover{border-color:var(--clay);}
+    .feat-icon{font-size:1.8rem;margin-bottom:12px;}
+    .feat h3{font-family:var(--font-display);font-size:0.98rem;font-weight:700;margin-bottom:6px;}
+    .feat p{font-size:0.83rem;color:var(--ink-soft);line-height:1.6;}
+    .how{text-align:center;}
+    .steps{display:flex;justify-content:center;align-items:flex-start;gap:0;flex-wrap:wrap;}
+    .step{flex:1;min-width:160px;max-width:210px;padding:0 16px;}
+    .step-num{font-family:var(--font-display);width:42px;height:42px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-weight:700;margin:0 auto 14px;}
+    .step-icon{font-size:1.7rem;margin-bottom:10px;}
+    .step h3{font-family:var(--font-display);font-size:0.92rem;font-weight:700;margin-bottom:6px;}
+    .step p{font-size:0.78rem;color:var(--ink-soft);line-height:1.55;}
+    .step-arr{font-size:1.3rem;color:var(--line);padding-top:18px;}
+    .sbar{background:var(--ink);padding:38px 60px;display:grid;grid-template-columns:repeat(4,1fr);}
+    .si{text-align:center;border-right:1px solid rgba(251,247,242,0.1);padding:0 18px;}
+    .si:last-child{border:none;}
+    .si-num{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--gold);}
+    .si-label{font-size:0.74rem;color:rgba(251,247,242,0.55);margin-top:4px;}
+    .cta{background:var(--clay);padding:76px 60px;text-align:center;}
+    .cta h2{font-family:var(--font-display);font-size:2rem;font-weight:700;color:white;margin-bottom:10px;}
+    .cta p{color:rgba(255,255,255,0.85);margin-bottom:26px;}
+    .cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+    .footer{background:var(--ink);padding:36px 60px;text-align:center;color:rgba(251,247,242,0.4);font-size:0.82rem;}
+    .footer .logo{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--paper);display:inline-block;margin-bottom:8px;}
+    .footer a{color:rgba(251,247,242,0.6);text-decoration:none;}
+    .footer a:hover{color:var(--gold);}
+    @media(max-width:980px){
+      .hero{grid-template-columns:1fr;padding:48px 24px 0;min-height:auto;}
+      .hero-visual{display:none;}
+      .feat-grid{grid-template-columns:1fr 1fr;}
+      .sbar{grid-template-columns:1fr 1fr;gap:20px;}
+      .section{padding:56px 24px;}
+      .cta{padding:56px 24px;}
+      .footer{padding:30px 24px;}
+      .rs-navbar{padding:0 20px;}
+    }
+    @media(max-width:600px){
+      .feat-grid,.steps{flex-direction:column;align-items:stretch;}
+      .feat-grid{grid-template-columns:1fr;}
+      .step{max-width:none;}
+      .step-arr{display:none;}
+      .search-row{flex-direction:column;align-items:stretch;}
+      .sf{width:100%;}
+      .hero-stats{flex-wrap:wrap;gap:16px;}
+      .hero-stats .hs{flex:1 1 40%;border-right:none;padding-right:0;}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="rs-navbar">
+  <a href="/" class="rs-logo">Room<span>sy</span></a>
+  <div class="nav">
+    <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
+    </button>
+    <a href="/listings">Browse PGs</a>
+    <th:block th:if="${!isLoggedIn}">
+      <a href="/login">Login</a>
+      <a href="/register" class="btn btn-clay btn-sm">Register</a>
+    </th:block>
+    <th:block th:if="${isLoggedIn}">
+      <a th:href="${currentUser.role == 'TENANT' ? '/tenant/dashboard' : '/owner/dashboard'}"
+         th:text="'Hi, ' + ${currentUser.fullName.split(' ')[0]}">Hi</a>
+      <a href="/logout" class="btn btn-outline btn-sm" style="color:var(--paper);border-color:rgba(251,247,242,0.25);">Logout</a>
+    </th:block>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-copy">
+    <span class="pill pill-clay">🏠 No broker. No commission. Direct connect.</span>
+    <h1>A PG that actually<br/>feels like <em>home</em></h1>
+    <p class="hero-sub">Browse verified PGs, message owners directly, and book a visit — without paying a single rupee in broker fees.</p>
+    <form action="/listings" method="get" class="search-card">
+      <div class="search-row">
+        <div class="sf"><label>City / area</label><input type="text" name="city" placeholder="e.g. Koramangala"/></div>
+        <div class="sf"><label>Gender</label>
+          <select name="gender"><option value="">Any</option><option value="Male">Boys</option><option value="Female">Girls</option></select>
+        </div>
+        <div class="sf"><label>Room type</label>
+          <select name="roomType"><option value="">Any</option><option value="Single">Single</option><option value="Double">Double</option><option value="Triple">Triple</option></select>
+        </div>
+        <div class="sf"><label>Max budget</label>
+          <select name="maxRent">
+            <option value="">Any</option>
+            <option value="6000">Under ₹6,000</option>
+            <option value="9000">Under ₹9,000</option>
+            <option value="12000">Under ₹12,000</option>
+            <option value="15000">Under ₹15,000</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-clay">Search →</button>
+      </div>
+    </form>
+    <div class="hero-stats">
+      <div class="hs"><div class="hs-num" th:text="${#lists.size(featuredPgs)} + '+'">4+</div><div class="hs-label">Active PGs</div></div>
+      <div class="hs"><div class="hs-num">0%</div><div class="hs-label">Broker fee</div></div>
+      <div class="hs"><div class="hs-num">Direct</div><div class="hs-label">Owner contact</div></div>
+      <div class="hs"><div class="hs-num">Verified</div><div class="hs-label">Listings</div></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="float-card fc1">
+      <div class="fc-top"><span class="fc-name">Sunshine Girls PG</span><span class="pill pill-sage">Verified</span></div>
+      <div class="fc-loc">📍 Koramangala</div>
+      <div class="fc-price">₹8,500<span style="font-size:0.7rem;font-weight:400;color:var(--ink-soft);">/mo</span></div>
+    </div>
+    <div class="float-card fc2">
+      <div class="fc-top"><span class="fc-name">Urban Nest Co-living</span><span class="pill pill-gold">Popular</span></div>
+      <div class="fc-loc">📍 HSR Layout</div>
+      <div class="fc-price">₹12,000<span style="font-size:0.7rem;font-weight:400;color:var(--ink-soft);">/mo</span></div>
+    </div>
+    <div class="float-card fc3">
+      <div class="fc-top"><span class="fc-name">GreenLeaf Boys PG</span><span class="pill pill-sage">Verified</span></div>
+      <div class="fc-loc">📍 Indiranagar</div>
+      <div class="fc-price">₹7,000<span style="font-size:0.7rem;font-weight:400;color:var(--ink-soft);">/mo</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:white;">
+  <div class="section-head">
+    <div class="rs-eyebrow">Top picks</div>
+    <h2 class="rs-title" style="font-size:clamp(1.7rem,2.6vw,2.2rem);">Featured PG listings</h2>
+  </div>
+  <div class="pgs-grid">
+    <div th:each="pg, i : ${featuredPgs}" class="pg-card">
+      <div class="pg-thumb"
+           th:style="${pg.photoUrl != null and !pg.photoUrl.isEmpty()} ?
+                        'background:url(' + ${pg.photoUrl} + ') center/cover no-repeat' :
+                        (${i.index % 4 == 0} ? 'background:linear-gradient(135deg,#C75D3B,#A8472A)' :
+                        (${i.index % 4 == 1} ? 'background:linear-gradient(135deg,#2F6B4F,#1F4D38)' :
+                        (${i.index % 4 == 2} ? 'background:linear-gradient(135deg,#E8B04B,#C98F2E)' :
+                        'background:linear-gradient(135deg,#241F1C,#3A332E)')))">
+        <span th:if="${pg.photoUrl == null or pg.photoUrl.isEmpty()}">🏠</span>
+        <div class="pg-thumb-badge" th:text="${pg.gender}">Any</div>
+      </div>
+      <div class="pg-body">
+        <div class="pg-name" th:text="${pg.pgName}">PG Name</div>
+        <div class="pg-loc">📍 <span th:text="${pg.location}"></span>, <span th:text="${pg.city}"></span></div>
+        <div class="pg-tags">
+          <span th:each="a : ${pg.amenitiesList}" class="tag" th:text="${a.trim()}">WiFi</span>
+        </div>
+        <div class="pg-footer">
+          <div class="pg-price">₹<span th:text="${pg.rent}">0</span><small>/mo</small></div>
+          <div style="font-size:0.78rem;color:var(--ink-soft);" th:text="${pg.roomType}">Single</div>
+        </div>
+        <a th:href="@{/pg/{id}(id=${pg.id})}" class="btn btn-ink btn-block btn-sm">View details →</a>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;">
+    <a href="/listings" class="btn btn-outline">View all listings →</a>
+  </div>
+</section>
+
+<section class="section features">
+  <div class="section-head">
+    <div class="rs-eyebrow">Why Roomsy</div>
+    <h2 class="rs-title" style="font-size:clamp(1.7rem,2.6vw,2.2rem);">The smarter way to find a PG</h2>
+  </div>
+  <div class="feat-grid">
+    <div class="feat"><div class="feat-icon">🛡️</div><h3>Verified listings</h3><p>Every PG is checked before it goes live — no fake listings, no outdated photos.</p></div>
+    <div class="feat"><div class="feat-icon">💸</div><h3>Zero broker fee</h3><p>Talk to owners directly and skip the ₹10,000–₹20,000 commission entirely.</p></div>
+    <div class="feat"><div class="feat-icon">🔍</div><h3>Filters that work</h3><p>Filter by city, gender, room type and budget to find your match in minutes.</p></div>
+    <div class="feat"><div class="feat-icon">📅</div><h3>Book a visit</h3><p>Request a visit straight from the listing — owners usually confirm within hours.</p></div>
+    <div class="feat"><div class="feat-icon">📞</div><h3>Contact the owner</h3><p>Get the owner's number directly. No middlemen, no waiting around.</p></div>
+    <div class="feat"><div class="feat-icon">🏠</div><h3>List your PG</h3><p>Own a PG? List it for free and start getting inquiries from real tenants.</p></div>
+  </div>
+</section>
+
+<section class="section how" style="background:var(--paper-dim);">
+  <div class="section-head" style="margin-left:auto;margin-right:auto;">
+    <div class="rs-eyebrow">The process</div>
+    <h2 class="rs-title" style="font-size:clamp(1.7rem,2.6vw,2.2rem);">From search to move-in, four steps</h2>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-icon">🔍</div><h3>Search</h3><p>Enter your city, budget and preferences</p></div>
+    <div class="step-arr">→</div>
+    <div class="step"><div class="step-num">2</div><div class="step-icon">🏠</div><h3>Browse</h3><p>View photos, amenities and owner contact</p></div>
+    <div class="step-arr">→</div>
+    <div class="step"><div class="step-num">3</div><div class="step-icon">📅</div><h3>Book a visit</h3><p>Send a request — the owner confirms directly</p></div>
+    <div class="step-arr">→</div>
+    <div class="step"><div class="step-num">4</div><div class="step-icon">🎉</div><h3>Move in</h3><p>Finalize the details and move into your new home</p></div>
+  </div>
+</section>
+
+<div class="sbar">
+  <div class="si"><div class="si-num">100%</div><div class="si-label">Verified listings</div></div>
+  <div class="si"><div class="si-num">0%</div><div class="si-label">Broker commission</div></div>
+  <div class="si"><div class="si-num">Direct</div><div class="si-label">Owner contact</div></div>
+  <div class="si"><div class="si-num">Free</div><div class="si-label">For everyone</div></div>
+</div>
+
+<section class="section" style="background:var(--white);">
+  <div class="section-head" style="margin-left:auto;margin-right:auto;text-align:center;">
+    <div class="rs-eyebrow">Real experiences</div>
+    <h2 class="rs-title" style="font-size:clamp(1.7rem,2.6vw,2.2rem);">What our users think about us</h2>
+    <p style="font-size:0.88rem;color:var(--ink-soft);margin-top:8px;">Honest reviews from tenants who found their PG through Roomsy</p>
+  </div>
+
+  <div th:if="${!#lists.isEmpty(latestReviews)}"
+       style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;">
+    <div th:each="r : ${latestReviews}"
+         style="background:var(--paper-dim);border-radius:var(--radius-tag-sm);padding:22px;border:1px solid var(--line);">
+      <div style="color:#E8B04B;font-size:1rem;margin-bottom:10px;" th:text="${r.stars}">★★★★★</div>
+      <p style="font-size:0.84rem;color:var(--ink-soft);line-height:1.7;margin-bottom:14px;font-style:italic;"
+         th:text="${r.comment != null and !r.comment.isEmpty()} ? ${r.comment} : 'Great PG — highly recommend!'">Comment</p>
+      <div style="display:flex;align-items:center;gap:9px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:700;"
+             th:text="${#strings.substring(r.tenant.fullName,0,1)}">T</div>
+        <div>
+          <div style="font-size:0.82rem;font-weight:700;color:var(--ink);" th:text="${r.tenant.fullName}">Name</div>
+          <div style="font-size:0.7rem;color:var(--ink-soft);" th:text="'Reviewed ' + ${r.pgListing.pgName}">PG</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div th:if="${#lists.isEmpty(latestReviews)}"
+       style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;">
+    <div style="background:var(--paper-dim);border-radius:var(--radius-tag-sm);padding:22px;border:1px solid var(--line);">
+      <div style="color:#E8B04B;font-size:1rem;margin-bottom:10px;">★★★★★</div>
+      <p style="font-size:0.84rem;color:var(--ink-soft);line-height:1.7;margin-bottom:14px;font-style:italic;">"Found my PG in 2 days — no broker, no commission. Saved ₹18,000 in fees. Highly recommend Roomsy!"</p>
+      <div style="display:flex;align-items:center;gap:9px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--clay);color:white;display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:700;">P</div>
+        <div>
+          <div style="font-size:0.82rem;font-weight:700;color:var(--ink);">Priya Sharma</div>
+          <div style="font-size:0.7rem;color:var(--ink-soft);">Tenant · Koramangala</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--paper-dim);border-radius:var(--radius-tag-sm);padding:22px;border:1px solid var(--line);">
+      <div style="color:#E8B04B;font-size:1rem;margin-bottom:10px;">★★★★★</div>
+      <p style="font-size:0.84rem;color:var(--ink-soft);line-height:1.7;margin-bottom:14px;font-style:italic;">"Listed my PG for free, got 5 inquiries in the first week. The booking system is so clean and simple."</p>
+      <div style="display:flex;align-items:center;gap:9px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--sage);color:white;display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:700;">R</div>
+        <div>
+          <div style="font-size:0.82rem;font-weight:700;color:var(--ink);">Rajan Mehta</div>
+          <div style="font-size:0.7rem;color:var(--ink-soft);">PG Owner · HSR Layout</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--paper-dim);border-radius:var(--radius-tag-sm);padding:22px;border:1px solid var(--line);">
+      <div style="color:#E8B04B;font-size:1rem;margin-bottom:10px;">★★★★☆</div>
+      <p style="font-size:0.84rem;color:var(--ink-soft);line-height:1.7;margin-bottom:14px;font-style:italic;">"The filter by budget and gender saved me so much time. Booked a visit the same day, moved in the next week."</p>
+      <div style="display:flex;align-items:center;gap:9px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--gold);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:700;">A</div>
+        <div>
+          <div style="font-size:0.82rem;font-weight:700;color:var(--ink);">Arjun Nair</div>
+          <div style="font-size:0.7rem;color:var(--ink-soft);">Tenant · Indiranagar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Ready to find your PG?</h2>
+  <p>Browse verified listings or list your own — both are completely free.</p>
+  <div class="cta-btns">
+    <a href="/listings" class="btn" style="background:white;color:var(--clay-deep);">Browse PGs →</a>
+    <a href="/register?role=OWNER" class="btn btn-outline" style="color:white;border-color:rgba(255,255,255,0.5);">List your PG</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="logo">Room<span style="color:var(--clay);font-style:italic;">sy</span></div>
+  <p>PG finder platform · No broker · No commission · Always free</p>
+  <p style="margin-top:10px;">
+    <a href="/listings">Browse PGs</a> &nbsp;·&nbsp;
+    <a href="/register">Register</a> &nbsp;·&nbsp;
+    <a href="/login">Login</a>
+  </p>
+</footer>
+
+</body>
+</html>

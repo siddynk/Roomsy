@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script>(function(){var t=localStorage.getItem('roomsy-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PG Listings — Roomsy Admin</title>
+  <link rel="stylesheet" th:href="@{/css/roomsy.css}"/>
+  <script th:src="@{/js/theme.js}" defer></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--font-body);background:var(--paper);color:var(--ink);display:flex;}
+    .sidebar{width:220px;background:#1C1714;min-height:100vh;position:sticky;top:0;flex-shrink:0;display:flex;flex-direction:column;}
+    .sb-top{padding:22px 20px;border-bottom:1px solid rgba(251,247,242,0.07);}
+    .sb-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:#FBF7F2;text-decoration:none;display:block;}
+    .sb-logo span{color:var(--clay);font-style:italic;}
+    .sb-badge{font-size:0.62rem;color:rgba(251,247,242,0.35);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-top:3px;}
+    .sb-nav{padding:14px 0;flex:1;}
+    .sb-section{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:rgba(251,247,242,0.28);padding:10px 20px 5px;}
+    .sb-link{display:flex;align-items:center;gap:10px;padding:9px 20px;color:rgba(251,247,242,0.6);text-decoration:none;font-size:0.82rem;font-weight:500;transition:all .18s;border-left:3px solid transparent;}
+    .sb-link:hover{background:rgba(251,247,242,0.06);color:#FBF7F2;}
+    .sb-link.active{background:rgba(199,93,59,0.12);color:var(--clay);border-left-color:var(--clay);}
+    .sb-bottom{padding:14px 20px;border-top:1px solid rgba(251,247,242,0.07);}
+    .sb-bottom a{color:rgba(251,247,242,0.45);text-decoration:none;font-size:0.78rem;}
+    .sb-bottom a:hover{color:#FBF7F2;}
+    .main{flex:1;overflow:auto;min-width:0;}
+    .topbar{background:var(--white);padding:15px 30px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+    .topbar h1{font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--ink);}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .admin-tag{background:rgba(199,93,59,0.1);color:var(--clay);padding:4px 12px;border-radius:100px;font-size:0.7rem;font-weight:700;border:1px solid rgba(199,93,59,0.2);}
+    .content{padding:20px 30px 60px;}
+
+    .summary-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:18px;}
+    .sb-card{background:var(--white);border-radius:var(--radius-tag-sm);padding:13px 17px;border:1px solid var(--line);box-shadow:var(--shadow-card);display:flex;align-items:center;gap:10px;}
+    .sb-num{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--ink);}
+    .sb-label{font-size:0.63rem;color:var(--ink-soft);font-weight:600;text-transform:uppercase;margin-top:2px;}
+
+    .table-wrap{background:var(--white);border-radius:var(--radius-tag-sm);border:1px solid var(--line);box-shadow:var(--shadow-card);overflow:hidden;}
+    table{width:100%;border-collapse:collapse;}
+    thead{background:var(--ink);}
+    thead th{padding:11px 15px;text-align:left;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:rgba(251,247,242,0.8);}
+    tbody tr{border-bottom:1px solid var(--paper-dim);transition:background .15s;}
+    tbody tr:last-child{border-bottom:none;}
+    tbody tr:hover{background:var(--paper-dim);}
+    tbody td{padding:11px 15px;font-size:0.8rem;color:var(--ink);}
+    .pg-name-cell{font-family:var(--font-display);font-weight:700;display:block;}
+    .pg-owner-cell{font-size:0.7rem;color:var(--ink-soft);}
+
+    @media(max-width:900px){body{flex-direction:column;}.sidebar{width:100%;min-height:auto;position:static;}.content,.topbar{padding:16px;}table{display:block;overflow-x:auto;}.summary-bar{grid-template-columns:1fr 1fr;}}
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sb-top"><a href="/" class="sb-logo">Room<span>sy</span></a><div class="sb-badge">Admin panel</div></div>
+    <div class="sb-nav">
+      <div class="sb-section">Main</div>
+      <a href="/admin/dashboard" class="sb-link">📊 Dashboard</a>
+      <div class="sb-section">Manage</div>
+      <a href="/admin/clients"  class="sb-link">👥 Clients</a>
+      <div class="sb-section">Site</div>
+      <a href="/" class="sb-link" target="_blank">🌐 Public site</a>
+    </div>
+    <div class="sb-bottom"><a href="/admin/logout">🚪 Logout</a></div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h1>🏠 All PG listings</h1>
+      <div class="topbar-right">
+        <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode"
+                style="border-color:var(--line);color:var(--ink);background:var(--paper-dim);">
+          <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
+        </button>
+        <span class="admin-tag" th:text="'🔐 ' + ${adminName}">Admin</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="summary-bar">
+        <div class="sb-card">
+          <span style="font-size:1.3rem;">🏠</span>
+          <div><div class="sb-num" th:text="${#lists.size(pgs)}">0</div><div class="sb-label">Total PGs</div></div>
+        </div>
+        <div class="sb-card">
+          <span style="font-size:1.3rem;">✅</span>
+          <div>
+            <div class="sb-num" th:text="${pgs.stream().filter(p -> T(java.util.Objects).equals(p.status, 'Active')).count()}">0</div>
+            <div class="sb-label">Active</div>
+          </div>
+        </div>
+        <div class="sb-card">
+          <span style="font-size:1.3rem;">🌐</span>
+          <div>
+            <a href="/listings" target="_blank" style="font-family:var(--font-display);font-size:0.88rem;font-weight:700;color:var(--clay);text-decoration:none;">View public →</a>
+            <div class="sb-label">Public listings</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>#</th><th>PG name</th><th>Owner</th><th>Location</th><th>Rent</th><th>Type</th><th>Gender</th><th>Status</th><th>View</th></tr>
+          </thead>
+          <tbody>
+            <tr th:each="pg : ${pgs}">
+              <td style="color:var(--ink-soft);font-size:0.7rem;" th:text="${pg.id}">#</td>
+              <td>
+                <span class="pg-name-cell" th:text="${pg.pgName}">PG</span>
+                <span class="pg-owner-cell" th:text="'by ' + ${pg.owner.fullName}">Owner</span>
+              </td>
+              <td>
+                <div style="font-size:0.8rem;font-weight:600;" th:text="${pg.owner.fullName}">Owner</div>
+                <div style="font-size:0.7rem;color:var(--ink-soft);" th:text="${pg.owner.email}">email</div>
+              </td>
+              <td style="font-size:0.76rem;color:var(--ink-soft);" th:text="${pg.location} + ', ' + ${pg.city}">Loc</td>
+              <td style="font-family:var(--font-display);font-weight:700;color:var(--clay);" th:text="'₹' + ${pg.rent}">₹0</td>
+              <td style="font-size:0.76rem;" th:text="${pg.roomType}">Type</td>
+              <td style="font-size:0.76rem;" th:text="${pg.gender}">Gender</td>
+              <td>
+                <span class="pill"
+                  th:classappend="${pg.status=='Active'} ? 'pill-sage' : 'pill-muted'"
+                  th:text="${pg.status}">Status</span>
+              </td>
+              <td>
+                <a th:href="@{/pg/{id}(id=${pg.id})}" class="btn btn-outline btn-sm" target="_blank">👁 View</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

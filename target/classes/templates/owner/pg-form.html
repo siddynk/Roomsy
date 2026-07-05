@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script>(function(){var t=localStorage.getItem('roomsy-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${edit} ? 'Edit PG — Roomsy' : 'List New PG — Roomsy'">PG Form — Roomsy</title>
+  <link rel="stylesheet" th:href="@{/css/roomsy.css}"/>
+  <script th:src="@{/js/theme.js}" defer></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--font-body);background:var(--paper);color:var(--ink);}
+    .nav{display:flex;gap:12px;align-items:center;}
+    .nav a{color:rgba(251,247,242,0.78);text-decoration:none;font-weight:500;font-size:0.85rem;}
+    .page-header{background:var(--white);padding:22px 40px;border-bottom:1px solid var(--line);}
+    .page-header h1{font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--ink);margin-bottom:3px;}
+    .page-header p{color:var(--ink-soft);font-size:0.85rem;}
+    .wrap{max-width:760px;margin:26px auto;padding:0 20px 60px;}
+
+    .card{background:var(--white);border-radius:var(--radius-tag-sm);border:1px solid var(--line);box-shadow:var(--shadow-card);padding:22px 26px;margin-bottom:16px;}
+    .card h3{font-family:var(--font-display);font-size:0.82rem;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--paper-dim);}
+
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:11px;}
+    label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--ink-soft);}
+    label .req{color:var(--clay);}
+    input,select,textarea{padding:10px 13px;border:2px solid var(--line);border-radius:9px;font-family:var(--font-body);font-size:0.88rem;color:var(--ink);background:var(--paper-dim);outline:none;transition:all .15s;width:100%;}
+    input:focus,select:focus,textarea:focus{border-color:var(--clay);background:var(--white);}
+    textarea{resize:vertical;min-height:88px;}
+    .hint{font-size:0.7rem;color:var(--ink-soft);margin-top:2px;}
+
+    /* Amenity checkboxes */
+    .amenity-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+    .am-check{display:flex;align-items:center;gap:8px;padding:9px 12px;border:2px solid var(--line);border-radius:9px;cursor:pointer;transition:all .18s;font-size:0.8rem;font-weight:500;color:var(--ink);background:var(--paper-dim);}
+    .am-check:hover{border-color:var(--clay);}
+    .am-check.checked{border-color:var(--clay);background:rgba(199,93,59,0.06);color:var(--clay);}
+    .am-check input{display:none;}
+
+    .form-actions{display:flex;gap:12px;margin-top:8px;}
+    @media(max-width:600px){.form-grid{grid-template-columns:1fr;}.amenity-grid{grid-template-columns:1fr 1fr;}.rs-navbar{padding:0 20px;}.page-header{padding:22px 20px;}}
+  </style>
+</head>
+<body>
+  <nav class="rs-navbar">
+    <a href="/" class="rs-logo">Room<span>sy</span></a>
+    <div class="nav">
+      <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode">
+        <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
+      </button>
+      <a href="/owner/dashboard">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1 th:text="${edit} ? '✏️ Edit PG listing' : '🏠 List your PG'">PG Form</h1>
+    <p th:text="${edit} ? 'Update your PG details below.' : 'Fill in your PG details — it\'s free and takes 2 minutes.'">Desc</p>
+  </div>
+
+  <div class="wrap">
+    <form th:action="${edit} ? '/owner/pg/edit/' + ${pg.id} : '/owner/pg/add'"
+          th:object="${pg}" method="post">
+
+      <div class="card">
+        <h3>🏠 Basic information</h3>
+        <div class="form-grid">
+          <div class="fg"><label>PG name <span class="req">*</span></label><input type="text" th:field="*{pgName}" placeholder="e.g. Sunshine Girls PG" required/></div>
+          <div class="fg"><label>Phone number <span class="req">*</span></label><input type="tel" th:field="*{phone}" placeholder="9876543210" required/></div>
+          <div class="fg" style="grid-column:span 2;">
+            <label>Photo URL</label>
+            <input type="url" th:field="*{photoUrl}" placeholder="https://images.unsplash.com/... or any direct image link"/>
+            <span class="hint">Paste a direct link to a photo of your PG. Use Unsplash, Google Photos, or any image URL ending in .jpg/.png</span>
+          </div>
+          <div class="fg"><label>Full address <span class="req">*</span></label><input type="text" th:field="*{location}" placeholder="5th Block, Koramangala" required/></div>
+          <div class="fg"><label>City <span class="req">*</span></label><input type="text" th:field="*{city}" placeholder="Bengaluru" required/></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🛏️ Room details &amp; pricing</h3>
+        <div class="form-grid">
+          <div class="fg"><label>Monthly rent (₹) <span class="req">*</span></label><input type="number" th:field="*{rent}" placeholder="8500" min="1000" required/></div>
+          <div class="fg"><label>Room type <span class="req">*</span></label>
+            <select th:field="*{roomType}" required>
+              <option value="">-- Select --</option>
+              <option value="Single">Single room</option>
+              <option value="Double">Double sharing</option>
+              <option value="Triple">Triple sharing</option>
+            </select>
+          </div>
+          <div class="fg"><label>Gender <span class="req">*</span></label>
+            <select th:field="*{gender}" required>
+              <option value="">-- Select --</option>
+              <option value="Male">Boys only</option>
+              <option value="Female">Girls only</option>
+              <option value="Any">Co-living (any)</option>
+            </select>
+          </div>
+          <div class="fg"><label>Status</label>
+            <select th:field="*{status}">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>✨ Amenities</h3>
+        <p class="hint" style="margin-bottom:12px;">Click the tiles to select — selected ones turn orange.</p>
+        <div class="amenity-grid" id="amenityGrid">
+          <label class="am-check" data-val="WiFi"><span>📶</span> WiFi</label>
+          <label class="am-check" data-val="Food"><span>🍽️</span> Food included</label>
+          <label class="am-check" data-val="AC"><span>❄️</span> Air conditioning</label>
+          <label class="am-check" data-val="Laundry"><span>🧺</span> Laundry</label>
+          <label class="am-check" data-val="CCTV"><span>🔒</span> CCTV security</label>
+          <label class="am-check" data-val="Gym"><span>🏋️</span> Gym</label>
+          <label class="am-check" data-val="Parking"><span>🚗</span> Parking</label>
+          <label class="am-check" data-val="Attached Bath"><span>🚿</span> Attached bath</label>
+          <label class="am-check" data-val="Housekeeping"><span>🧹</span> Housekeeping</label>
+          <label class="am-check" data-val="Power Backup"><span>⚡</span> Power backup</label>
+          <label class="am-check" data-val="Security Guard"><span>🛡️</span> Security guard</label>
+          <label class="am-check" data-val="Terrace"><span>🌿</span> Terrace</label>
+        </div>
+        <input type="hidden" name="amenities" id="amenitiesInput" th:value="*{amenities}"/>
+        <div class="fg" style="margin-top:12px;">
+          <label>Other amenities (comma-separated)</label>
+          <input type="text" id="amenitiesText" placeholder="e.g. Garden,Study room"
+                 oninput="syncFromText(this.value)"/>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📝 Description</h3>
+        <div class="fg">
+          <textarea th:field="*{description}" placeholder="Describe your PG — safety, nearby landmarks, food quality, house rules..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-clay" th:text="${edit} ? '💾 Update PG' : '✅ List my PG'">Submit</button>
+        <a href="/owner/dashboard" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Known tile values
+    const TILE_VALS = ['WiFi','Food','AC','Laundry','CCTV','Gym','Parking','Attached Bath','Housekeeping','Power Backup','Security Guard','Terrace'];
+
+    // Load existing saved amenities
+    const saved = (document.getElementById('amenitiesInput').value || '').split(',').map(v => v.trim()).filter(Boolean);
+    const selected = new Set(saved);
+
+    function syncHidden() {
+      document.getElementById('amenitiesInput').value = [...selected].join(',');
+    }
+
+    function syncFromText(val) {
+      // Extra amenities typed in text box — merge with tile selections
+      const extras = val.split(',').map(v => v.trim()).filter(v => v && !TILE_VALS.includes(v));
+      // Remove old extras, keep tile selections
+      [...selected].forEach(v => { if (!TILE_VALS.includes(v)) selected.delete(v); });
+      extras.forEach(v => selected.add(v));
+      syncHidden();
+    }
+
+    // Wire up tiles
+    document.querySelectorAll('#amenityGrid .am-check').forEach(label => {
+      const val = label.getAttribute('data-val');
+
+      // Pre-select if already in saved amenities
+      if (selected.has(val)) label.classList.add('checked');
+
+      label.addEventListener('click', function() {
+        if (selected.has(val)) {
+          selected.delete(val);
+          label.classList.remove('checked');
+        } else {
+          selected.add(val);
+          label.classList.add('checked');
+        }
+        syncHidden();
+        // Also update text box with any non-tile extras
+        const extras = [...selected].filter(v => !TILE_VALS.includes(v));
+        document.getElementById('amenitiesText').value = extras.join(',');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script>(function(){var t=localStorage.getItem('roomsy-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Client — Roomsy Admin</title>
+  <link rel="stylesheet" th:href="@{/css/roomsy.css}"/>
+  <script th:src="@{/js/theme.js}" defer></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--font-body);background:var(--paper);color:var(--ink);display:flex;}
+    .sidebar{width:220px;background:#1C1714;min-height:100vh;position:sticky;top:0;flex-shrink:0;display:flex;flex-direction:column;}
+    .sb-top{padding:22px 20px;border-bottom:1px solid rgba(251,247,242,0.07);}
+    .sb-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:#FBF7F2;text-decoration:none;display:block;}
+    .sb-logo span{color:var(--clay);font-style:italic;}
+    .sb-badge{font-size:0.62rem;color:rgba(251,247,242,0.35);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-top:3px;}
+    .sb-nav{padding:14px 0;flex:1;}
+    .sb-section{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:rgba(251,247,242,0.28);padding:10px 20px 5px;}
+    .sb-link{display:flex;align-items:center;gap:10px;padding:9px 20px;color:rgba(251,247,242,0.6);text-decoration:none;font-size:0.82rem;font-weight:500;transition:all .18s;border-left:3px solid transparent;}
+    .sb-link:hover{background:rgba(251,247,242,0.06);color:#FBF7F2;}
+    .sb-link.active{background:rgba(199,93,59,0.12);color:var(--clay);border-left-color:var(--clay);}
+    .sb-bottom{padding:14px 20px;border-top:1px solid rgba(251,247,242,0.07);}
+    .sb-bottom a{color:rgba(251,247,242,0.45);text-decoration:none;font-size:0.78rem;}
+    .sb-bottom a:hover{color:#FBF7F2;}
+    .main{flex:1;overflow:auto;min-width:0;}
+    .topbar{background:var(--white);padding:15px 30px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+    .topbar h1{font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--ink);}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .admin-tag{background:rgba(199,93,59,0.1);color:var(--clay);padding:4px 12px;border-radius:100px;font-size:0.7rem;font-weight:700;border:1px solid rgba(199,93,59,0.2);}
+    .wrap{max-width:760px;padding:26px 30px 60px;}
+
+    .id-pill{display:inline-block;background:rgba(199,93,59,0.1);color:var(--clay);padding:5px 14px;border-radius:100px;font-size:0.76rem;font-weight:700;border:1px solid rgba(199,93,59,0.2);margin-bottom:16px;}
+
+    .card{background:var(--white);border-radius:var(--radius-tag-sm);border:1px solid var(--line);box-shadow:var(--shadow-card);padding:22px 26px;margin-bottom:16px;}
+    .card h3{font-family:var(--font-display);font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--ink);margin-bottom:16px;padding-bottom:9px;border-bottom:2px solid var(--paper-dim);}
+
+    .readonly-info{background:var(--paper-dim);border-radius:10px;padding:13px 17px;margin-bottom:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;border:1px solid var(--line);}
+    .ri-item .ri-label{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--ink-soft);margin-bottom:3px;}
+    .ri-item .ri-value{font-size:0.84rem;font-weight:600;color:var(--ink);}
+
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+    .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:11px;}
+    label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--ink-soft);}
+    label .req{color:var(--clay);}
+    input,select{padding:10px 13px;border:2px solid var(--line);border-radius:9px;font-family:var(--font-body);font-size:0.88rem;color:var(--ink);background:var(--paper-dim);outline:none;transition:all .15s;width:100%;}
+    input:focus,select:focus{border-color:var(--clay);background:var(--white);}
+    .hint{font-size:0.7rem;color:var(--ink-soft);margin-top:2px;}
+    .form-actions{display:flex;gap:10px;}
+
+    @media(max-width:900px){body{flex-direction:column;}.sidebar{width:100%;min-height:auto;position:static;}.wrap{padding:16px;}.form-grid{grid-template-columns:1fr;}.readonly-info{grid-template-columns:1fr 1fr;}}
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sb-top"><a href="/" class="sb-logo">Room<span>sy</span></a><div class="sb-badge">Admin panel</div></div>
+    <div class="sb-nav">
+      <div class="sb-section">Main</div>
+      <a href="/admin/dashboard" class="sb-link">📊 Dashboard</a>
+      <div class="sb-section">Manage</div>
+      <a href="/admin/clients"  class="sb-link active">👥 Clients</a>
+      <div class="sb-section">Site</div>
+      <a href="/" class="sb-link" target="_blank">🌐 Public site</a>
+    </div>
+    <div class="sb-bottom"><a href="/admin/logout">🚪 Logout</a></div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h1>✏️ Edit client</h1>
+      <div class="topbar-right">
+        <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode"
+                style="border-color:var(--line);color:var(--ink);background:var(--paper-dim);">
+          <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
+        </button>
+        <span class="admin-tag" th:text="'🔐 ' + ${adminName}">Admin</span>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="id-pill" th:text="'Client #' + ${client.id}">ID</div>
+
+      <div class="card">
+        <h3>👤 User account (read-only)</h3>
+        <div class="readonly-info">
+          <div class="ri-item"><div class="ri-label">Full name</div><div class="ri-value" th:text="${client.user.fullName}">Name</div></div>
+          <div class="ri-item"><div class="ri-label">Email</div><div class="ri-value" th:text="${client.user.email}">email</div></div>
+          <div class="ri-item"><div class="ri-label">Phone</div><div class="ri-value" th:text="${client.user.phone}">phone</div></div>
+        </div>
+        <p style="font-size:0.72rem;color:var(--ink-soft);">ℹ️ User account details can only be changed by the user. Admin can update PG preferences and status below.</p>
+      </div>
+
+      <form th:action="@{/admin/clients/edit/{id}(id=${client.id})}"
+            th:object="${client}" method="post">
+
+        <div class="card">
+          <h3>🏠 PG preferences</h3>
+          <div class="form-grid">
+            <div class="fg">
+              <label>Preferred location <span class="req">*</span></label>
+              <input type="text" th:field="*{preferredLocation}" placeholder="Koramangala, Bengaluru" required/>
+            </div>
+            <div class="fg">
+              <label>Budget (₹/month) <span class="req">*</span></label>
+              <input type="number" th:field="*{budget}" min="1000" required/>
+            </div>
+            <div class="fg">
+              <label>Room type <span class="req">*</span></label>
+              <select th:field="*{roomType}" required>
+                <option value="Single">Single room</option>
+                <option value="Double">Double sharing</option>
+                <option value="Triple">Triple sharing</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Gender <span class="req">*</span></label>
+              <select th:field="*{gender}" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Any">Any</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Status <span class="req">*</span></label>
+              <select th:field="*{status}" required>
+                <option value="Searching">🔍 Searching</option>
+                <option value="Placed">✅ Placed</option>
+                <option value="Inactive">💤 Inactive</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>📍 Placement details <span style="font-weight:400;color:var(--ink-soft);text-transform:none;letter-spacing:0;">(optional)</span></h3>
+          <div class="form-grid">
+            <div class="fg">
+              <label>PG name</label>
+              <input type="text" th:field="*{pgName}" placeholder="Sunshine Girls PG"/>
+              <span class="hint">Fill once client is placed</span>
+            </div>
+            <div class="fg">
+              <label>Move-in date</label>
+              <input type="date" th:field="*{moveInDate}"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-clay">💾 Update client</button>
+          <a th:href="@{/admin/clients/{id}(id=${client.id})}" class="btn btn-outline">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
