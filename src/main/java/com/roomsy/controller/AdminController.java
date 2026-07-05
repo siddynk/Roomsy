@@ -133,8 +133,22 @@ public class AdminController {
                                HttpSession session,
                                RedirectAttributes ra) {
         requireAdmin(session);
-        clientService.delete(id);
-        ra.addFlashAttribute("successMsg", "🗑️ Client deleted.");
+
+        try {
+            Client client = clientService.getById(id)
+                    .orElseThrow(() -> new RuntimeException("Client not found"));
+
+            // Mark the client as inactive instead of deleting
+            client.setStatus("Inactive");
+            clientService.save(client);
+
+            ra.addFlashAttribute("successMsg", "✅ Booking cancelled successfully!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            ra.addFlashAttribute("error", "❌ " + e.getMessage());
+        }
+
         return "redirect:/admin/clients";
     }
 
