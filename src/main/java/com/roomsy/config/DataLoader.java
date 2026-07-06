@@ -54,6 +54,20 @@ public class DataLoader {
 
             User o11 = userRepo.save(new User("Vivek Ramesh", "vivek@gmail.com",
                     encoder.encode("password123"), "9876543333", "OWNER"));
+            User o12 = userRepo.save(new User("Harish Gowda", "harish@gmail.com",
+                    encoder.encode("password123"), "9876551111", "OWNER"));
+
+            User o13 = userRepo.save(new User("Prakash Naik", "prakash@gmail.com",
+                    encoder.encode("password123"), "9876552222", "OWNER"));
+
+            User o14 = userRepo.save(new User("Lakshmi Menon", "lakshmi@gmail.com",
+                    encoder.encode("password123"), "9876553333", "OWNER"));
+
+            User o15 = userRepo.save(new User("Ajay Kulkarni", "ajay@gmail.com",
+                    encoder.encode("password123"), "9876554444", "OWNER"));
+
+            User o16 = userRepo.save(new User("Bhaskar Rao", "bhaskar@gmail.com",
+                    encoder.encode("password123"), "9876555555", "OWNER"));
 
             // ── Tenants ───────────────────────────────────────
             User t1 = userRepo.save(new User("Priya Sharma", "priya@gmail.com",
@@ -104,6 +118,16 @@ public class DataLoader {
 
             User t18 = userRepo.save(new User("Akhil Nair", "akhil@gmail.com",
                     encoder.encode("password123"), "9805555555", "TENANT"));
+            User t19 = userRepo.save(new User("Naveen Kumar","naveen@gmail.com",encoder.encode("password123"),"9806661111","TENANT"));
+            User t20 = userRepo.save(new User("Shruti Rao","shruti@gmail.com",encoder.encode("password123"),"9806662222","TENANT"));
+            User t21 = userRepo.save(new User("Keerthi N","keerthi@gmail.com",encoder.encode("password123"),"9806663333","TENANT"));
+            User t22 = userRepo.save(new User("Abhishek S","abhishek@gmail.com",encoder.encode("password123"),"9806664444","TENANT"));
+            User t23 = userRepo.save(new User("Sahana M","sahana@gmail.com",encoder.encode("password123"),"9806665555","TENANT"));
+            User t24 = userRepo.save(new User("Darshan R","darshan@gmail.com",encoder.encode("password123"),"9806666666","TENANT"));
+            User t25 = userRepo.save(new User("Kevin Dsouza","kevin@gmail.com",encoder.encode("password123"),"9806667777","TENANT"));
+            User t26 = userRepo.save(new User("Manasa H","manasa@gmail.com",encoder.encode("password123"),"9806668888","TENANT"));
+            User t27 = userRepo.save(new User("Ritika Jain","ritika@gmail.com",encoder.encode("password123"),"9806669999","TENANT"));
+            User t28 = userRepo.save(new User("Yash Patel","yash@gmail.com",encoder.encode("password123"),"9806670000","TENANT"));
 
 
             // ── PG Listings ───────────────────────────────────
@@ -374,6 +398,80 @@ public class DataLoader {
             pg18.setStatus("Active");
             pg18.setPhotoUrl("https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&q=80");
             pgRepo.save(pg18);
+            PgListing pg19 = new PgListing();
+            pg19.setOwner(o12);
+            pg19.setPgName("Orchid Living");
+            pg19.setLocation("Mahadevapura");
+            pg19.setCity("Bengaluru");
+            pg19.setRent(13500);
+            pg19.setRoomType("Single");
+            pg19.setGender("Any");
+            pg19.setAmenities("WiFi,Food,Gym,AC,CCTV,Housekeeping");
+            pg19.setDescription("Luxury PG near Phoenix Marketcity.");
+            pg19.setPhone("9876551111");
+            pg19.setStatus("Active");
+            pg19.setPhotoUrl("https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&q=80");
+            pgRepo.save(pg19);
+
+            PgListing pg20 = new PgListing();
+            pg20.setOwner(o13);
+            pg20.setPgName("Campus Stay");
+            pg20.setLocation("Basavanagudi");
+            pg20.setCity("Bengaluru");
+            pg20.setRent(7600);
+            pg20.setRoomType("Triple");
+            pg20.setGender("Male");
+            pg20.setAmenities("WiFi,RO Water,Study Room,CCTV");
+            pg20.setDescription("Affordable PG for students.");
+            pg20.setPhone("9876552222");
+            pg20.setStatus("Active");
+            pg20.setPhotoUrl("https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80");
+            pgRepo.save(pg20);
+
+            PgListing pg21 = new PgListing();
+            pg21.setOwner(o14);
+            pg21.setPgName("Opal Residency");
+            pg21.setLocation("Kalyan Nagar");
+            pg21.setCity("Bengaluru");
+            pg21.setRent(11800);
+            pg21.setRoomType("Double");
+            pg21.setGender("Female");
+            pg21.setAmenities("WiFi,Food,Laundry,Power Backup");
+            pg21.setDescription("Premium ladies PG.");
+            pg21.setPhone("9876553333");
+            pg21.setStatus("Active");
+            pg21.setPhotoUrl("https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80");
+            pgRepo.save(pg21);
+
+            PgListing pg22 = new PgListing();
+            pg22.setOwner(o15);
+            pg22.setPgName("Metro Elite");
+            pg22.setLocation("MG Road");
+            pg22.setCity("Bengaluru");
+            pg22.setRent(15000);
+            pg22.setRoomType("Single");
+            pg22.setGender("Any");
+            pg22.setAmenities("WiFi,AC,Gym,Parking,Laundry");
+            pg22.setDescription("Luxury co-living in city centre.");
+            pg22.setPhone("9876554444");
+            pg22.setStatus("Active");
+            pg22.setPhotoUrl("https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80");
+            pgRepo.save(pg22);
+
+            PgListing pg23 = new PgListing();
+            pg23.setOwner(o16);
+            pg23.setPgName("Sai Residency");
+            pg23.setLocation("RT Nagar");
+            pg23.setCity("Bengaluru");
+            pg23.setRent(8200);
+            pg23.setRoomType("Double");
+            pg23.setGender("Male");
+            pg23.setAmenities("WiFi,Food,CCTV,Parking");
+            pg23.setDescription("Budget PG with good connectivity.");
+            pg23.setPhone("9876555555");
+            pg23.setStatus("Active");
+            pg23.setPhotoUrl("https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&q=80");
+            pgRepo.save(pg23);
 
             // ── Bookings ──────────────────────────────────────
             bookingRepo.save(new Booking(t1, pg1,
@@ -439,6 +537,16 @@ public class DataLoader {
             bookingRepo.save(new Booking(t18, pg18,
                     LocalDate.now().plusDays(7),
                     "Interested in single sharing."));
+            bookingRepo.save(new Booking(t19, pg19, LocalDate.now().plusDays(4),"Interested in luxury single room."));
+            bookingRepo.save(new Booking(t20, pg20, LocalDate.now().plusDays(3),"Student looking for affordable PG."));
+            bookingRepo.save(new Booking(t21, pg21, LocalDate.now().plusDays(6),"Need ladies PG."));
+            bookingRepo.save(new Booking(t22, pg22, LocalDate.now().plusDays(5),"Can I visit this weekend?"));
+            bookingRepo.save(new Booking(t23, pg23, LocalDate.now().plusDays(2),"Looking for double sharing."));
+            bookingRepo.save(new Booking(t24, pg19, LocalDate.now().plusDays(8),"Interested in moving next month."));
+            bookingRepo.save(new Booking(t25, pg22, LocalDate.now().plusDays(7),"Looking for premium room."));
+            bookingRepo.save(new Booking(t26, pg21, LocalDate.now().plusDays(9),"Need accommodation urgently."));
+            bookingRepo.save(new Booking(t27, pg20, LocalDate.now().plusDays(4),"Can I schedule a visit?"));
+            bookingRepo.save(new Booking(t28, pg23, LocalDate.now().plusDays(3),"Looking for budget PG."));
 
             // ── Clients (admin view) ──────────────────────────
             Client c1 = new Client(t1, "Koramangala, Bengaluru", 9000, "Female", "Single");
@@ -509,6 +617,49 @@ public class DataLoader {
             Client c18 = new Client(t18, "HSR Layout", 13000, "Male", "Single");
             c18.setStatus("Searching");
             clientRepo.save(c18);
+            Client c19 = new Client(t19,"Mahadevapura",13500,"Male","Single");
+            c19.setStatus("Searching");
+            clientRepo.save(c19);
+
+            Client c20 = new Client(t20,"Basavanagudi",7600,"Male","Triple");
+            c20.setStatus("Placed");
+            c20.setPgName("Campus Stay");
+            c20.setMoveInDate(LocalDate.now().plusDays(10));
+            clientRepo.save(c20);
+
+            Client c21 = new Client(t21,"Kalyan Nagar",11800,"Female","Double");
+            c21.setStatus("Searching");
+            clientRepo.save(c21);
+
+            Client c22 = new Client(t22,"MG Road",15000,"Male","Single");
+            c22.setStatus("Searching");
+            clientRepo.save(c22);
+
+            Client c23 = new Client(t23,"RT Nagar",8200,"Male","Double");
+            c23.setStatus("Searching");
+            clientRepo.save(c23);
+
+            Client c24 = new Client(t24,"Mahadevapura",13500,"Male","Single");
+            c24.setStatus("Searching");
+            clientRepo.save(c24);
+
+            Client c25 = new Client(t25,"MG Road",15000,"Male","Single");
+            c25.setStatus("Placed");
+            c25.setPgName("Metro Elite");
+            c25.setMoveInDate(LocalDate.now().plusDays(12));
+            clientRepo.save(c25);
+
+            Client c26 = new Client(t26,"Kalyan Nagar",11800,"Female","Double");
+            c26.setStatus("Searching");
+            clientRepo.save(c26);
+
+            Client c27 = new Client(t27,"Basavanagudi",7600,"Female","Triple");
+            c27.setStatus("Searching");
+            clientRepo.save(c27);
+
+            Client c28 = new Client(t28,"RT Nagar",8200,"Male","Double");
+            c28.setStatus("Searching");
+            clientRepo.save(c28);
 
             clientRepo.save(new Client(t2, "HSR Layout, Bengaluru", 12000, "Male", "Single"));
             clientRepo.save(new Client(t3, "Indiranagar, Bengaluru", 7000, "Female", "Double"));
