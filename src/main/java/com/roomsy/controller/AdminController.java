@@ -60,19 +60,19 @@ public class AdminController {
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
         requireAdmin(session);
-        model.addAttribute("adminName",     session.getAttribute(SessionUtils.SESSION_ADMIN));
-        model.addAttribute("totalClients",  clientService.countAll());
-        model.addAttribute("searching",     clientService.countSearching());
-        model.addAttribute("placed",        clientService.countPlaced());
-        model.addAttribute("inactive",      clientService.countInactive());
-        model.addAttribute("totalPgs",      pgListingService.countAll());
-        model.addAttribute("activePgs",     pgListingService.countActive());
-        model.addAttribute("totalBookings", bookingService.countAll());
-        model.addAttribute("pendingBookings", bookingService.countPending());
-        model.addAttribute("totalTenants",  userService.countTenants());
-        model.addAttribute("totalOwners",   userService.countOwners());
-        model.addAttribute("recentClients", clientService.getAll().stream().limit(5).toList());
-        model.addAttribute("recentBookings",bookingService.getAll().stream().limit(5).toList());
+        model.addAttribute("adminName",      session.getAttribute(SessionUtils.SESSION_ADMIN));
+        model.addAttribute("totalClients",   clientService.countAll());
+        model.addAttribute("searching",      clientService.countSearching());
+        model.addAttribute("placed",         clientService.countPlaced());
+        model.addAttribute("inactive",       clientService.countInactive());
+        model.addAttribute("totalPgs",       pgListingService.countAll());
+        model.addAttribute("activePgs",      pgListingService.countActive());
+        model.addAttribute("totalBookings",  bookingService.countAll());
+        model.addAttribute("pendingBookings",bookingService.countPending());
+        model.addAttribute("totalTenants",   userService.countTenants());
+        model.addAttribute("totalOwners",    userService.countOwners());
+        model.addAttribute("recentClients",  clientService.getAll().stream().limit(5).toList());
+        model.addAttribute("recentBookings", bookingService.getAll().stream().limit(5).toList());
         return "admin/dashboard";
     }
 
@@ -128,27 +128,13 @@ public class AdminController {
         return "redirect:/admin/clients";
     }
 
-    @PostMapping("/clients/delete/{id}")
+    @GetMapping("/clients/delete/{id}")
     public String deleteClient(@PathVariable Long id,
                                HttpSession session,
                                RedirectAttributes ra) {
         requireAdmin(session);
-
-        try {
-            Client client = clientService.getById(id)
-                    .orElseThrow(() -> new RuntimeException("Client not found"));
-
-            // Mark the client as inactive instead of deleting
-            client.setStatus("Inactive");
-            clientService.save(client);
-
-            ra.addFlashAttribute("successMsg", "✅ Client marked as inactive.");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            ra.addFlashAttribute("error", "❌ " + e.getMessage());
-        }
-
+        clientService.delete(id);
+        ra.addFlashAttribute("successMsg", "🗑️ Client deleted.");
         return "redirect:/admin/clients";
     }
 
@@ -161,6 +147,26 @@ public class AdminController {
         return "admin/pgs";
     }
 
+    @GetMapping("/pgs/delete/{id}")
+    public String deletePg(@PathVariable Long id,
+                           HttpSession session,
+                           RedirectAttributes ra) {
+        requireAdmin(session);
+        pgListingService.delete(id);
+        ra.addFlashAttribute("successMsg", "🗑️ PG listing deleted.");
+        return "redirect:/admin/pgs";
+    }
+
+    @GetMapping("/pgs/toggle/{id}")
+    public String togglePgStatus(@PathVariable Long id,
+                                 HttpSession session,
+                                 RedirectAttributes ra) {
+        requireAdmin(session);
+        pgListingService.toggleStatus(id);
+        ra.addFlashAttribute("successMsg", "✅ PG status updated.");
+        return "redirect:/admin/pgs";
+    }
+
     // ── ALL BOOKINGS ──────────────────────────────────────────
     @GetMapping("/bookings")
     public String allBookings(HttpSession session, Model model) {
@@ -168,5 +174,35 @@ public class AdminController {
         model.addAttribute("bookings",  bookingService.getAll());
         model.addAttribute("adminName", session.getAttribute(SessionUtils.SESSION_ADMIN));
         return "admin/bookings";
+    }
+
+    @GetMapping("/bookings/confirm/{id}")
+    public String confirmBooking(@PathVariable Long id,
+                                 HttpSession session,
+                                 RedirectAttributes ra) {
+        requireAdmin(session);
+        bookingService.updateStatus(id, "CONFIRMED");
+        ra.addFlashAttribute("successMsg", "✅ Booking confirmed.");
+        return "redirect:/admin/bookings";
+    }
+
+    @GetMapping("/bookings/reject/{id}")
+    public String rejectBooking(@PathVariable Long id,
+                                HttpSession session,
+                                RedirectAttributes ra) {
+        requireAdmin(session);
+        bookingService.updateStatus(id, "REJECTED");
+        ra.addFlashAttribute("successMsg", "❌ Booking rejected.");
+        return "redirect:/admin/bookings";
+    }
+
+    @GetMapping("/bookings/delete/{id}")
+    public String deleteBooking(@PathVariable Long id,
+                                HttpSession session,
+                                RedirectAttributes ra) {
+        requireAdmin(session);
+        bookingService.delete(id);
+        ra.addFlashAttribute("successMsg", "🗑️ Booking deleted.");
+        return "redirect:/admin/bookings";
     }
 }

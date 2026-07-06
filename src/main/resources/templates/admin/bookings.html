@@ -28,12 +28,11 @@
     .topbar-right{display:flex;align-items:center;gap:10px;}
     .admin-tag{background:rgba(199,93,59,0.1);color:var(--clay);padding:4px 12px;border-radius:100px;font-size:0.7rem;font-weight:700;border:1px solid rgba(199,93,59,0.2);}
     .content{padding:20px 30px 60px;}
-
+    .flash{margin:14px 30px 0;padding:12px 16px;border-radius:var(--radius-tag-sm);}
     .summary-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:18px;}
     .sb-card{background:var(--white);border-radius:var(--radius-tag-sm);padding:13px 17px;border:1px solid var(--line);box-shadow:var(--shadow-card);display:flex;align-items:center;gap:10px;}
     .sb-num{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--ink);}
     .sb-label{font-size:0.63rem;color:var(--ink-soft);font-weight:600;text-transform:uppercase;margin-top:2px;}
-
     .table-wrap{background:var(--white);border-radius:var(--radius-tag-sm);border:1px solid var(--line);box-shadow:var(--shadow-card);overflow:hidden;}
     table{width:100%;border-collapse:collapse;}
     thead{background:var(--ink);}
@@ -45,97 +44,105 @@
     .name-cell{font-weight:700;display:block;}
     .sub-cell{font-size:0.7rem;color:var(--ink-soft);}
     .msg-cell{font-size:0.74rem;color:var(--ink-soft);font-style:italic;max-width:170px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-
     .empty{text-align:center;padding:48px;color:var(--ink-soft);}
     .empty .ei{font-size:2rem;margin-bottom:10px;}
-
     @media(max-width:900px){body{flex-direction:column;}.sidebar{width:100%;min-height:auto;position:static;}.content,.topbar{padding:16px;}table{display:block;overflow-x:auto;}.summary-bar{grid-template-columns:1fr 1fr;}}
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <div class="sb-top"><a href="/" class="sb-logo">Room<span>sy</span></a><div class="sb-badge">Admin panel</div></div>
-    <div class="sb-nav">
-      <div class="sb-section">Main</div>
-      <a href="/admin/dashboard" class="sb-link">📊 Dashboard</a>
-      <div class="sb-section">Manage</div>
-      <a href="/admin/clients"  class="sb-link">👥 Clients</a>
-      <div class="sb-section">Site</div>
-      <a href="/" class="sb-link" target="_blank">🌐 Public site</a>
-    </div>
-    <div class="sb-bottom"><a href="/admin/logout">🚪 Logout</a></div>
+<div class="sidebar">
+  <div class="sb-top"><a href="/" class="sb-logo">Room<span>sy</span></a><div class="sb-badge">Admin panel</div></div>
+  <div class="sb-nav">
+    <div class="sb-section">Main</div>
+    <a href="/admin/dashboard" class="sb-link">📊 Dashboard</a>
+    <div class="sb-section">Manage</div>
+    <a href="/admin/clients"  class="sb-link">👥 Clients</a>
+    <a href="/admin/pgs"      class="sb-link">🏠 PG listings</a>
+    <a href="/admin/bookings" class="sb-link active">📅 Bookings</a>
+    <div class="sb-section">Site</div>
+    <a href="/" class="sb-link" target="_blank">🌐 Public site</a>
   </div>
+  <div class="sb-bottom"><a href="/admin/logout">🚪 Logout</a></div>
+</div>
 
-  <div class="main">
-    <div class="topbar">
-      <h1>📅 All bookings</h1>
-      <div class="topbar-right">
-        <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode"
-                style="border-color:var(--line);color:var(--ink);background:var(--paper-dim);">
-          <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
-        </button>
-        <span class="admin-tag" th:text="'🔐 ' + ${adminName}">Admin</span>
-      </div>
-    </div>
-
-    <div class="content">
-      <div class="summary-bar">
-        <div class="sb-card">
-          <span style="font-size:1.3rem;">📋</span>
-          <div><div class="sb-num" th:text="${#lists.size(bookings)}">0</div><div class="sb-label">Total bookings</div></div>
-        </div>
-        <div class="sb-card">
-          <span style="font-size:1.3rem;">⏳</span>
-          <div>
-            <div class="sb-num" th:text="${bookings.stream().filter(b -> T(java.util.Objects).equals(b.status, 'PENDING')).count()}">0</div>
-            <div class="sb-label">Pending</div>
-          </div>
-        </div>
-        <div class="sb-card">
-          <span style="font-size:1.3rem;">✅</span>
-          <div>
-            <div class="sb-num" th:text="${bookings.stream().filter(b -> T(java.util.Objects).equals(b.status, 'CONFIRMED')).count()}">0</div>
-            <div class="sb-label">Confirmed</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="table-wrap">
-        <div class="empty" th:if="${#lists.isEmpty(bookings)}">
-          <div class="ei">📭</div>
-          <p>No bookings yet.</p>
-        </div>
-        <table th:if="${!#lists.isEmpty(bookings)}">
-          <thead>
-            <tr><th>#</th><th>Tenant</th><th>PG name</th><th>Owner</th><th>Visit date</th><th>Message</th><th>Requested</th><th>Status</th></tr>
-          </thead>
-          <tbody>
-            <tr th:each="b : ${bookings}">
-              <td style="color:var(--ink-soft);font-size:0.7rem;" th:text="${b.id}">#</td>
-              <td>
-                <span class="name-cell" th:text="${b.tenant.fullName}">Tenant</span>
-                <span class="sub-cell" th:text="${b.tenant.email}">email</span>
-                <span class="sub-cell">📞 <a th:href="'tel:' + ${b.tenant.phone}" th:text="${b.tenant.phone}" style="color:var(--clay);text-decoration:none;">phone</a></span>
-              </td>
-              <td>
-                <span class="name-cell" th:text="${b.pgListing.pgName}">PG</span>
-                <span class="sub-cell" th:text="${b.pgListing.location}">Loc</span>
-              </td>
-              <td style="font-size:0.78rem;font-weight:600;" th:text="${b.pgListing.owner.fullName}">Owner</td>
-              <td style="font-weight:700;" th:text="${b.visitDate}">Date</td>
-              <td><span class="msg-cell" th:text="${b.message!=null?b.message:'—'}">msg</span></td>
-              <td style="font-size:0.74rem;color:var(--ink-soft);" th:text="${#temporals.format(b.createdAt,'dd MMM yyyy')}">Date</td>
-              <td>
-                <span class="pill"
-                  th:classappend="${b.status=='PENDING'} ? 'pill-gold' :
-                                  (${b.status=='CONFIRMED'} ? 'pill-sage' : 'pill-clay')"
-                  th:text="${b.status}">Status</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+<div class="main">
+  <div class="topbar">
+    <h1>📅 All bookings</h1>
+    <div class="topbar-right">
+      <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode"
+              style="border-color:var(--line);color:var(--ink);background:var(--paper-dim);">
+        <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
+      </button>
+      <span class="admin-tag" th:text="'🔐 ' + ${adminName}">Admin</span>
     </div>
   </div>
+  <div class="flash alert alert-success" th:if="${successMsg}" th:text="${successMsg}"></div>
+
+  <div class="content">
+    <div class="summary-bar">
+      <div class="sb-card">
+        <span style="font-size:1.3rem;">📋</span>
+        <div><div class="sb-num" th:text="${#lists.size(bookings)}">0</div><div class="sb-label">Total bookings</div></div>
+      </div>
+      <div class="sb-card">
+        <span style="font-size:1.3rem;">⏳</span>
+        <div>
+          <div class="sb-num" th:text="${bookings.stream().filter(b -> T(java.util.Objects).equals(b.status, 'PENDING')).count()}">0</div>
+          <div class="sb-label">Pending</div>
+        </div>
+      </div>
+      <div class="sb-card">
+        <span style="font-size:1.3rem;">✅</span>
+        <div>
+          <div class="sb-num" th:text="${bookings.stream().filter(b -> T(java.util.Objects).equals(b.status, 'CONFIRMED')).count()}">0</div>
+          <div class="sb-label">Confirmed</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="empty" th:if="${#lists.isEmpty(bookings)}">
+        <div class="ei">📭</div>
+        <p>No bookings yet.</p>
+      </div>
+      <table th:if="${!#lists.isEmpty(bookings)}">
+        <thead>
+        <tr><th>#</th><th>Tenant</th><th>PG name</th><th>Owner</th><th>Visit date</th><th>Message</th><th>Requested</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="b : ${bookings}">
+          <td style="color:var(--ink-soft);font-size:0.7rem;" th:text="${b.id}">#</td>
+          <td>
+            <span class="name-cell" th:text="${b.tenant.fullName}">Tenant</span>
+            <span class="sub-cell" th:text="${b.tenant.email}">email</span>
+            <span class="sub-cell">📞 <a th:href="'tel:' + ${b.tenant.phone}" th:text="${b.tenant.phone}" style="color:var(--clay);text-decoration:none;">phone</a></span>
+          </td>
+          <td>
+            <span class="name-cell" th:text="${b.pgListing.pgName}">PG</span>
+            <span class="sub-cell" th:text="${b.pgListing.location}">Loc</span>
+          </td>
+          <td style="font-size:0.78rem;font-weight:600;" th:text="${b.pgListing.owner.fullName}">Owner</td>
+          <td style="font-weight:700;" th:text="${b.visitDate}">Date</td>
+          <td><span class="msg-cell" th:text="${b.message!=null?b.message:'—'}">msg</span></td>
+          <td style="font-size:0.74rem;color:var(--ink-soft);" th:text="${#temporals.format(b.createdAt,'dd MMM yyyy')}">Date</td>
+          <td>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;">
+              <th:block th:if="${b.status=='PENDING'}">
+                <a th:href="@{/admin/bookings/confirm/{id}(id=${b.id})}" class="btn btn-sage btn-sm">✅ Confirm</a>
+                <a th:href="@{/admin/bookings/reject/{id}(id=${b.id})}"  class="btn btn-danger btn-sm">❌ Reject</a>
+              </th:block>
+              <span th:if="${b.status!='PENDING'}" class="pill"
+                    th:classappend="${b.status=='CONFIRMED'} ? 'pill-sage' : 'pill-clay'"
+                    th:text="${b.status}">Status</span>
+              <a th:href="@{/admin/bookings/delete/{id}(id=${b.id})}" class="btn btn-danger btn-sm"
+                 onclick="return confirm('Delete this booking?')">🗑</a>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 </body>
 </html>

@@ -28,12 +28,11 @@
     .topbar-right{display:flex;align-items:center;gap:10px;}
     .admin-tag{background:rgba(199,93,59,0.1);color:var(--clay);padding:4px 12px;border-radius:100px;font-size:0.7rem;font-weight:700;border:1px solid rgba(199,93,59,0.2);}
     .content{padding:20px 30px 60px;}
-
+    .flash{margin:14px 30px 0;padding:12px 16px;border-radius:var(--radius-tag-sm);}
     .summary-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:18px;}
     .sb-card{background:var(--white);border-radius:var(--radius-tag-sm);padding:13px 17px;border:1px solid var(--line);box-shadow:var(--shadow-card);display:flex;align-items:center;gap:10px;}
     .sb-num{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--ink);}
     .sb-label{font-size:0.63rem;color:var(--ink-soft);font-weight:600;text-transform:uppercase;margin-top:2px;}
-
     .table-wrap{background:var(--white);border-radius:var(--radius-tag-sm);border:1px solid var(--line);box-shadow:var(--shadow-card);overflow:hidden;}
     table{width:100%;border-collapse:collapse;}
     thead{background:var(--ink);}
@@ -44,91 +43,98 @@
     tbody td{padding:11px 15px;font-size:0.8rem;color:var(--ink);}
     .pg-name-cell{font-family:var(--font-display);font-weight:700;display:block;}
     .pg-owner-cell{font-size:0.7rem;color:var(--ink-soft);}
-
     @media(max-width:900px){body{flex-direction:column;}.sidebar{width:100%;min-height:auto;position:static;}.content,.topbar{padding:16px;}table{display:block;overflow-x:auto;}.summary-bar{grid-template-columns:1fr 1fr;}}
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <div class="sb-top"><a href="/" class="sb-logo">Room<span>sy</span></a><div class="sb-badge">Admin panel</div></div>
-    <div class="sb-nav">
-      <div class="sb-section">Main</div>
-      <a href="/admin/dashboard" class="sb-link">📊 Dashboard</a>
-      <div class="sb-section">Manage</div>
-      <a href="/admin/clients"  class="sb-link">👥 Clients</a>
-      <div class="sb-section">Site</div>
-      <a href="/" class="sb-link" target="_blank">🌐 Public site</a>
-    </div>
-    <div class="sb-bottom"><a href="/admin/logout">🚪 Logout</a></div>
+<div class="sidebar">
+  <div class="sb-top"><a href="/" class="sb-logo">Room<span>sy</span></a><div class="sb-badge">Admin panel</div></div>
+  <div class="sb-nav">
+    <div class="sb-section">Main</div>
+    <a href="/admin/dashboard" class="sb-link">📊 Dashboard</a>
+    <div class="sb-section">Manage</div>
+    <a href="/admin/clients"  class="sb-link">👥 Clients</a>
+    <a href="/admin/pgs"      class="sb-link active">🏠 PG listings</a>
+    <a href="/admin/bookings" class="sb-link">📅 Bookings</a>
+    <div class="sb-section">Site</div>
+    <a href="/" class="sb-link" target="_blank">🌐 Public site</a>
   </div>
+  <div class="sb-bottom"><a href="/admin/logout">🚪 Logout</a></div>
+</div>
 
-  <div class="main">
-    <div class="topbar">
-      <h1>🏠 All PG listings</h1>
-      <div class="topbar-right">
-        <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode"
-                style="border-color:var(--line);color:var(--ink);background:var(--paper-dim);">
-          <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
-        </button>
-        <span class="admin-tag" th:text="'🔐 ' + ${adminName}">Admin</span>
+<div class="main">
+  <div class="topbar">
+    <h1>🏠 All PG listings</h1>
+    <div class="topbar-right">
+      <button type="button" class="theme-toggle" onclick="toggleRoomsyTheme()" aria-label="Toggle dark mode"
+              style="border-color:var(--line);color:var(--ink);background:var(--paper-dim);">
+        <span class="icon-light">🌙</span><span class="icon-dark">☀️</span>
+      </button>
+      <span class="admin-tag" th:text="'🔐 ' + ${adminName}">Admin</span>
+    </div>
+  </div>
+  <div class="flash alert alert-success" th:if="${successMsg}" th:text="${successMsg}"></div>
+
+  <div class="content">
+    <div class="summary-bar">
+      <div class="sb-card">
+        <span style="font-size:1.3rem;">🏠</span>
+        <div><div class="sb-num" th:text="${#lists.size(pgs)}">0</div><div class="sb-label">Total PGs</div></div>
+      </div>
+      <div class="sb-card">
+        <span style="font-size:1.3rem;">✅</span>
+        <div>
+          <div class="sb-num" th:text="${pgs.stream().filter(p -> T(java.util.Objects).equals(p.status, 'Active')).count()}">0</div>
+          <div class="sb-label">Active</div>
+        </div>
+      </div>
+      <div class="sb-card">
+        <span style="font-size:1.3rem;">🌐</span>
+        <div>
+          <a href="/listings" target="_blank" style="font-family:var(--font-display);font-size:0.88rem;font-weight:700;color:var(--clay);text-decoration:none;">View public →</a>
+          <div class="sb-label">Public listings</div>
+        </div>
       </div>
     </div>
 
-    <div class="content">
-      <div class="summary-bar">
-        <div class="sb-card">
-          <span style="font-size:1.3rem;">🏠</span>
-          <div><div class="sb-num" th:text="${#lists.size(pgs)}">0</div><div class="sb-label">Total PGs</div></div>
-        </div>
-        <div class="sb-card">
-          <span style="font-size:1.3rem;">✅</span>
-          <div>
-            <div class="sb-num" th:text="${pgs.stream().filter(p -> T(java.util.Objects).equals(p.status, 'Active')).count()}">0</div>
-            <div class="sb-label">Active</div>
-          </div>
-        </div>
-        <div class="sb-card">
-          <span style="font-size:1.3rem;">🌐</span>
-          <div>
-            <a href="/listings" target="_blank" style="font-family:var(--font-display);font-size:0.88rem;font-weight:700;color:var(--clay);text-decoration:none;">View public →</a>
-            <div class="sb-label">Public listings</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>#</th><th>PG name</th><th>Owner</th><th>Location</th><th>Rent</th><th>Type</th><th>Gender</th><th>Status</th><th>View</th></tr>
-          </thead>
-          <tbody>
-            <tr th:each="pg : ${pgs}">
-              <td style="color:var(--ink-soft);font-size:0.7rem;" th:text="${pg.id}">#</td>
-              <td>
-                <span class="pg-name-cell" th:text="${pg.pgName}">PG</span>
-                <span class="pg-owner-cell" th:text="'by ' + ${pg.owner.fullName}">Owner</span>
-              </td>
-              <td>
-                <div style="font-size:0.8rem;font-weight:600;" th:text="${pg.owner.fullName}">Owner</div>
-                <div style="font-size:0.7rem;color:var(--ink-soft);" th:text="${pg.owner.email}">email</div>
-              </td>
-              <td style="font-size:0.76rem;color:var(--ink-soft);" th:text="${pg.location} + ', ' + ${pg.city}">Loc</td>
-              <td style="font-family:var(--font-display);font-weight:700;color:var(--clay);" th:text="'₹' + ${pg.rent}">₹0</td>
-              <td style="font-size:0.76rem;" th:text="${pg.roomType}">Type</td>
-              <td style="font-size:0.76rem;" th:text="${pg.gender}">Gender</td>
-              <td>
+    <div class="table-wrap">
+      <table>
+        <thead>
+        <tr><th>#</th><th>PG name</th><th>Owner</th><th>Location</th><th>Rent</th><th>Type</th><th>Gender</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="pg : ${pgs}">
+          <td style="color:var(--ink-soft);font-size:0.7rem;" th:text="${pg.id}">#</td>
+          <td>
+            <span class="pg-name-cell" th:text="${pg.pgName}">PG</span>
+            <span class="pg-owner-cell" th:text="'by ' + ${pg.owner.fullName}">Owner</span>
+          </td>
+          <td>
+            <div style="font-size:0.8rem;font-weight:600;" th:text="${pg.owner.fullName}">Owner</div>
+            <div style="font-size:0.7rem;color:var(--ink-soft);" th:text="${pg.owner.email}">email</div>
+          </td>
+          <td style="font-size:0.76rem;color:var(--ink-soft);" th:text="${pg.location} + ', ' + ${pg.city}">Loc</td>
+          <td style="font-family:var(--font-display);font-weight:700;color:var(--clay);" th:text="'₹' + ${pg.rent}">₹0</td>
+          <td style="font-size:0.76rem;" th:text="${pg.roomType}">Type</td>
+          <td style="font-size:0.76rem;" th:text="${pg.gender}">Gender</td>
+          <td>
                 <span class="pill"
-                  th:classappend="${pg.status=='Active'} ? 'pill-sage' : 'pill-muted'"
-                  th:text="${pg.status}">Status</span>
-              </td>
-              <td>
-                <a th:href="@{/pg/{id}(id=${pg.id})}" class="btn btn-outline btn-sm" target="_blank">👁 View</a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                      th:classappend="${pg.status=='Active'} ? 'pill-sage' : 'pill-muted'"
+                      th:text="${pg.status}">Status</span>
+          </td>
+          <td>
+            <div style="display:flex;gap:5px;">
+              <a th:href="@{/pg/{id}(id=${pg.id})}" class="btn btn-outline btn-sm" target="_blank">👁 View</a>
+              <a th:href="@{/admin/pgs/toggle/{id}(id=${pg.id})}" class="btn btn-sage btn-sm">⇄ Toggle</a>
+              <a th:href="@{/admin/pgs/delete/{id}(id=${pg.id})}" class="btn btn-danger btn-sm"
+                 onclick="return confirm('Delete this PG listing?')">🗑</a>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
     </div>
   </div>
+</div>
 </body>
 </html>

@@ -34,7 +34,7 @@ public class PgListingService {
     }
 
     public List<PgListing> filter(String city, String gender,
-                                   String roomType, Integer maxRent) {
+                                  String roomType, Integer maxRent) {
         boolean hasCity     = city     != null && !city.isBlank();
         boolean hasGender   = gender   != null && !gender.isBlank() && !gender.equals("Any");
         boolean hasRoomType = roomType != null && !roomType.isBlank();
@@ -55,6 +55,13 @@ public class PgListingService {
 
     public void delete(Long id) {
         pgListingRepository.deleteById(id);
+    }
+
+    public void toggleStatus(Long id) {
+        pgListingRepository.findById(id).ifPresent(pg -> {
+            pg.setStatus(pg.getStatus().equals("Active") ? "Inactive" : "Active");
+            pgListingRepository.save(pg);
+        });
     }
 
     public long countActive()   { return pgListingRepository.countByStatus("Active"); }

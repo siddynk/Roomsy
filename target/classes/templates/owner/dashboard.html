@@ -116,8 +116,10 @@
           <div class="pg-actions">
             <a th:href="@{/owner/pg/edit/{id}(id=${pg.id})}" class="btn btn-outline btn-sm">✏️ Edit</a>
             <a th:href="@{/pg/{id}(id=${pg.id})}" class="btn btn-ghost btn-sm">👁 View</a>
-            <a th:href="@{/owner/pg/delete/{id}(id=${pg.id})}" class="btn btn-danger btn-sm"
-               onclick="return confirm('Delete this PG listing?')">🗑</a>
+            <form th:action="@{/owner/pg/delete/{id}(id=${pg.id})}" method="post" style="display:inline">
+              <button type="submit" class="btn btn-danger btn-sm"
+                      onclick="return confirm('Delete this PG listing?')">🗑</button>
+            </form>
           </div>
         </div>
       </div>
@@ -153,8 +155,12 @@
           th:classappend="${b.status == 'CONFIRMED'} ? 'pill-sage' : 'pill-clay'"
           th:text="${b.status}">Status</span>
         <th:block th:if="${b.status == 'PENDING'}">
-          <a th:href="@{/owner/booking/confirm/{id}(id=${b.id})}" class="btn btn-sage btn-sm">✅ Confirm</a>
-          <a th:href="@{/owner/booking/reject/{id}(id=${b.id})}" class="btn btn-danger btn-sm">❌ Reject</a>
+          <form th:action="@{/owner/booking/confirm/{id}(id=${b.id})}" method="post" style="display:inline">
+            <button type="submit" class="btn btn-sage btn-sm">✅ Confirm</button>
+          </form>
+          <form th:action="@{/owner/booking/reject/{id}(id=${b.id})}" method="post" style="display:inline">
+            <button type="submit" class="btn btn-danger btn-sm">❌ Reject</button>
+          </form>
         </th:block>
       </div>
     </div>

@@ -96,8 +96,12 @@
 
       <div class="bc-actions">
         <th:block th:if="${b.status == 'PENDING'}">
-          <a th:href="@{/owner/booking/confirm/{id}(id=${b.id})}" class="btn btn-sage btn-sm">✅ Confirm visit</a>
-          <a th:href="@{/owner/booking/reject/{id}(id=${b.id})}" class="btn btn-danger btn-sm">❌ Reject</a>
+          <form th:action="@{/owner/booking/confirm/{id}(id=${b.id})}" method="post" style="display:inline">
+            <button type="submit" class="btn btn-sage btn-sm">✅ Confirm visit</button>
+          </form>
+          <form th:action="@{/owner/booking/reject/{id}(id=${b.id})}" method="post" style="display:inline">
+            <button type="submit" class="btn btn-danger btn-sm">❌ Reject</button>
+          </form>
         </th:block>
         <a th:href="@{/pg/{id}(id=${b.pgListing.id})}" class="btn btn-outline btn-sm">👁 View PG</a>
       </div>

@@ -148,8 +148,10 @@
         <div class="action-row">
           <a th:href="@{/admin/clients/edit/{id}(id=${client.id})}" class="btn btn-clay btn-sm">✏️ Edit client</a>
           <a href="/admin/clients" class="btn btn-outline btn-sm">← Back to clients</a>
-          <a th:href="@{/admin/clients/delete/{id}(id=${client.id})}" class="btn btn-danger btn-sm"
-             th:onclick="'return confirm(\'Delete ' + ${client.user.fullName} + '?\')'">🗑️ Delete</a>
+          <form th:action="@{/admin/clients/delete/{id}(id=${client.id})}" method="post" style="display:inline">
+            <button type="submit" class="btn btn-danger btn-sm"
+                    th:onclick="'return confirm(\'Mark ' + ${client.user.fullName} + ' inactive?\')'">🗑️ Deactivate</button>
+          </form>
         </div>
       </div>
     </div>
