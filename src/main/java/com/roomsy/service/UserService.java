@@ -30,7 +30,11 @@ public class UserService {
 
     public boolean checkAdminCredentials(String email, String rawPassword,
                                          String adminEmail, String adminPassword) {
-        return email.equals(adminEmail) && rawPassword.equals(adminPassword);
+        if (!email.equalsIgnoreCase(adminEmail)) return false;
+        if (adminPassword.startsWith("$2a$") || adminPassword.startsWith("$2b$")) {
+            return encoder.matches(rawPassword, adminPassword);
+        }
+        return rawPassword.equals(adminPassword);
     }
 
     public Optional<User> findByEmail(String email) {

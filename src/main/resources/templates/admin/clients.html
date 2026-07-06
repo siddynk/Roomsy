@@ -149,8 +149,10 @@
                 <div class="actions">
                   <a th:href="@{/admin/clients/{id}(id=${c.id})}"      class="btn btn-ghost btn-sm">👁</a>
                   <a th:href="@{/admin/clients/edit/{id}(id=${c.id})}" class="btn btn-outline btn-sm">✏️</a>
-                  <a th:href="@{/admin/clients/delete/{id}(id=${c.id})}" class="btn btn-danger btn-sm"
-                     th:onclick="'return confirm(\'Delete ' + ${c.user.fullName} + '?\')'">🗑</a>
+                  <form th:action="@{/admin/clients/delete/{id}(id=${c.id})}" method="post" style="display:inline">
+                    <button type="submit" class="btn btn-danger btn-sm"
+                            th:onclick="'return confirm(\'Mark ' + ${c.user.fullName} + ' inactive?\')'">🗑</button>
+                  </form>
                 </div>
               </td>
             </tr>

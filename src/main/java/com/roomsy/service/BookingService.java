@@ -45,6 +45,15 @@ public class BookingService {
         }).orElseThrow(() -> new RuntimeException("Booking not found: " + id));
     }
 
+    public Booking updateStatusForOwner(User owner, Long id, String status) {
+        return bookingRepository.findById(id).map(b -> {
+            if (!b.getPgListing().getOwner().getId().equals(owner.getId()))
+                throw new RuntimeException("You can only manage bookings for your own PGs.");
+            b.setStatus(status);
+            return bookingRepository.save(b);
+        }).orElseThrow(() -> new RuntimeException("Booking not found: " + id));
+    }
+
     public void delete(Long id) { bookingRepository.deleteById(id); }
 
     public long countPending()   { return bookingRepository.countByStatus("PENDING"); }

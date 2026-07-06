@@ -32,6 +32,7 @@ public class SessionUtils {
     }
 
     public static void setUser(HttpSession session, User user) {
+        user.setPassword(null);
         session.setAttribute(SESSION_USER, user);
         session.setAttribute(SESSION_ROLE, user.getRole());
     }

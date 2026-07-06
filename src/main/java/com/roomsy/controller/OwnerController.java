@@ -104,7 +104,7 @@ public class OwnerController {
     }
 
     // ── DELETE PG ─────────────────────────────────────────────
-    @GetMapping("/pg/delete/{id}")
+    @PostMapping("/pg/delete/{id}")
     public String deletePg(@PathVariable Long id,
                            HttpSession session,
                            RedirectAttributes ra) {
@@ -129,23 +129,23 @@ public class OwnerController {
     }
 
     // ── CONFIRM BOOKING ───────────────────────────────────────
-    @GetMapping("/booking/confirm/{id}")
+    @PostMapping("/booking/confirm/{id}")
     public String confirmBooking(@PathVariable Long id,
                                  HttpSession session,
                                  RedirectAttributes ra) {
-        requireOwner(session);
-        bookingService.updateStatus(id, "CONFIRMED");
+        User owner = requireOwner(session);
+        bookingService.updateStatusForOwner(owner, id, "CONFIRMED");
         ra.addFlashAttribute("successMsg", "✅ Booking confirmed!");
         return "redirect:/owner/bookings";
     }
 
     // ── REJECT BOOKING ────────────────────────────────────────
-    @GetMapping("/booking/reject/{id}")
+    @PostMapping("/booking/reject/{id}")
     public String rejectBooking(@PathVariable Long id,
                                 HttpSession session,
                                 RedirectAttributes ra) {
-        requireOwner(session);
-        bookingService.updateStatus(id, "REJECTED");
+        User owner = requireOwner(session);
+        bookingService.updateStatusForOwner(owner, id, "REJECTED");
         ra.addFlashAttribute("successMsg", "❌ Booking rejected.");
         return "redirect:/owner/bookings";
     }

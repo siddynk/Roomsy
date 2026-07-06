@@ -128,7 +128,7 @@ public class AdminController {
         return "redirect:/admin/clients";
     }
 
-    @GetMapping("/clients/delete/{id}")
+    @PostMapping("/clients/delete/{id}")
     public String deleteClient(@PathVariable Long id,
                                HttpSession session,
                                RedirectAttributes ra) {
@@ -142,7 +142,7 @@ public class AdminController {
             client.setStatus("Inactive");
             clientService.save(client);
 
-            ra.addFlashAttribute("successMsg", "✅ Booking cancelled successfully!");
+            ra.addFlashAttribute("successMsg", "✅ Client marked as inactive.");
 
         } catch (Exception e) {
             e.printStackTrace();
