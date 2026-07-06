@@ -23,7 +23,7 @@ public class DataLoader {
     @Bean
     CommandLineRunner seed() {
         return args -> {
-            if (userRepo.count() > 0) return;
+//            if (userRepo.count() > 0) return;
 
             // ── Owners ────────────────────────────────────────
             User o1 = userRepo.save(new User("Rajan Mehta", "rajan@gmail.com",
