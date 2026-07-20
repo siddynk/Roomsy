@@ -1,4 +1,4 @@
-# Roomsy — Eoomsy is a full-stack accommodation platform that streamlines the interaction between tenants, PG owners, and administrators through a role-based booking workflow built with Spring Boot.
+**Roomsy** is a full-stack accommodation platform that streamlines the interaction between tenants, PG owners, and administrators through a role-based booking workflow built with Spring Boot.
 
 A full-stack PG (Paying Guest) accommodation finder platform built with Spring Boot. Tenants can browse and book PG visits, owners can list their properties, and admins manage the entire platform from a dedicated dashboard.
 
